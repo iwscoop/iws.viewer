@@ -357,7 +357,7 @@ viewer.observe('saveImage', function(data){
 - Chrome(latest)
 - FireFox(latest)
 - Edge(latest)
-- Internet Exporer 11+
+- Internet Explorer 11+
 
 ___________________
 ### License
