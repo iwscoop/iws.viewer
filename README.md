@@ -114,7 +114,10 @@ Demo - [http://www.iwscoop.co.kr/solution/demo](http://www.iwscoop.co.kr/solutio
 
 
     쎔네일의 세로크기 지정.
--------------------
+
+
+----------------------------
+
 ### Methods
 >**clear()**
 
@@ -255,6 +258,8 @@ viewer.observe('saveImage', function(data){
 
 
     주석 툴바 보일지 말지 설정.
+
+
 -------------------
 
 ### Properties
@@ -267,6 +272,7 @@ viewer.observe('saveImage', function(data){
 
 
 -------------------
+
 ### Events
 
 >**Annotation save event**
@@ -305,6 +311,7 @@ viewer.observe('saveImage', function(data){
         alert("영역좌표("+rc.left+", "+rc.top+", "+rc.right+", "+rc.bottom+")");
     });
 ```
+
 
 -------------------
 
