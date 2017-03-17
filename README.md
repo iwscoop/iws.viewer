@@ -26,6 +26,7 @@ Demo - [http://www.iwscoop.co.kr/solution/demo](http://www.iwscoop.co.kr/solutio
                     iws.viewer.toolbar.png
             vendor/
                     jquery-2.2.3.js
+                    hammer.min.js
                     spectrum.css
                     spectrum.js
             iws.viewer.js
@@ -163,7 +164,6 @@ Demo - [http://www.iwscoop.co.kr/solution/demo](http://www.iwscoop.co.kr/solutio
 
     뷰어에 그려진 주석을 저장한다.
     함수 호출시 저장된 데이터는 아래의 방법으로 얻을 수 있다.
-
 ```
     <!--  이벤트로 주석 데이터 받는 방법   -->
     viewer.observe('saveAnnotation', function(data){
@@ -181,7 +181,6 @@ Demo - [http://www.iwscoop.co.kr/solution/demo](http://www.iwscoop.co.kr/solutio
 >**saveImage()**
 
     현재 보고 있는 이미지를 png포멧의 이미지로 저장함.
-
 ```
 함수 호출시 발생하는 이벤트의 callback function에서 이미지를 얻을 수 있음.
 
@@ -227,13 +226,13 @@ viewer.observe('saveImage', function(data){
 - mode : 마우스 역할 지정.
     - Type : String ('move', 'range', 'glass' 중에서 선택 )
 ```
-    'move'  :   이미지가 화면보다 크면 마우스로 이미지 이동.
-    'range' :   마우스 클릭하여 드레그 한 영역의 좌표를 얻어옴
-                영역 좌표는 아래의 방식(callback function)처럼 선언하여 얻음.
+    'move'  : 이미지가 화면보다 크면 마우스로 이미지 이동.
+    'range' : 마우스 클릭하여 드레그 한 영역의 좌표를 얻어옴
+        - 영역 좌표는 아래의 방식(callback function)처럼 선언하여 얻음.
         viewer.observe("mouse:drawRanged", function(rc){
             alert("영역좌표("+rc.left+", "+rc.top+", "+rc.right+", "+rc.bottom+")");
         });
-    'glass' :   마우스 클릭하면 돋보기 화면으로 처리됨.
+    'glass' : 마우스 클릭하면 돋보기 화면으로 처리됨.
 ```
 
     이미지 이동할지, 영역지정할지, 돋보기보기로 할지 지정.
