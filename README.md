@@ -10,6 +10,7 @@ Demo - [http://www.iwscoop.co.kr/solution/demo](http://www.iwscoop.co.kr/solutio
     Zoom, rotation support.
 -------------------
 
+
 ### 제공
 : **Directory**
 
@@ -18,8 +19,6 @@ Demo - [http://www.iwscoop.co.kr/solution/demo](http://www.iwscoop.co.kr/solutio
                     iws.w.loader.js
                     iws.w.split.js
                     iws.w.resample.js
-                    IWSImageLib_min.js
-                    IWSTiffSplitLib_min.js
             img/
                     iws.viewer.background.png
                     iws.viewer.toolbar.png
@@ -39,6 +38,7 @@ Demo - [http://www.iwscoop.co.kr/solution/demo](http://www.iwscoop.co.kr/solutio
     <script src="./vendor/jquery-2.2.3.js"></script>
     <link href="./vendor/spectrum.css" rel="stylesheet">
     <script src="./vendor/spectrum.js"></script>
+    <script src="./vendor/hammer.min.js"></script>
 
     <link href="./iws.viewer.css" rel="stylesheet">
     <script src="./iws.viewer.js"></script>
@@ -74,6 +74,9 @@ Demo - [http://www.iwscoop.co.kr/solution/demo](http://www.iwscoop.co.kr/solutio
     iws.viewer.js파일이 있는 경로를 설정하여 넣어준다.
     즉, html과 iws.viewer.js파일이 같은 폴더에 있는 경우 path:'./'이 된다.  iws.viewer.js파일이 html파일의 하위폴더에
     위치한다면 path:'./하위폴더/' 를 입력한다.
+    또는 아래와 같이 설정한다.
+    path:'/IWS_Solution/WebContent/solution/iws/js',
+    path:'http://localhost:8181/IWS_Solution/WebContent/solution/iws/js',
 
 >**fitMode**
 - Type : Object
