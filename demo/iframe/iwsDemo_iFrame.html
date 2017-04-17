@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script>
+        function LoadImageUrl()
+        {
+            var obj = document.getElementById("ViewerFrame");
+
+            var objDoc = obj .contentWindow || obj .contentDocument;
+            objDoc.loadUrl("http://localhost:8181/IWS_Solution/WebContent/solution/test/images/multi(bw).tif");
+        }
+
+        function Clear(){
+            var obj = document.getElementById("ViewerFrame");
+
+            var objDoc = obj .contentWindow || obj .contentDocument;
+            objDoc.clear();
+        }
+        //Load
+        function LoadImage(e){
+            var input = e.target;
+
+            var reader = new FileReader();
+            reader.onload = function () {
+                var obj = document.getElementById("ViewerFrame");
+
+                var objDoc = obj .contentWindow || obj .contentDocument;
+                objDoc.loadFile(reader.result);
+            };
+            reader.readAsArrayBuffer(input.files[0]);
+        };
+
+    </script>
+</head>
+<body>
+<div id="main_header">
+    <nav id="main_gnb">
+        <ul>
+            <input id="loadimage" type="file"  onchange="LoadImage(event)"/>
+            <li><a href="#" onclick="LoadImageUrl()">Http File</a></li>
+            <li><a href="#" onclick="Clear()">Clear</a></li>
+        </ul>
+    </nav>
+
+</div>
+
+    <iframe id="ViewerFrame" src="./iframe.html" width="816" height="416" ></iframe>
+</body>
+</html>
