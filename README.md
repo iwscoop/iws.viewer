@@ -27,6 +27,8 @@ Demo - [http://www.iwscoop.co.kr/solution/demo](http://www.iwscoop.co.kr/solutio
                     hammer.min.js
                     spectrum.css
                     spectrum.js
+                    iws-scrollbar.css
+                    iws-scrollbar.js
             iws.viewer.js
             iws.viewer.css
 -------------------
