@@ -104,20 +104,6 @@ Demo - [http://www.iwscoop.co.kr/solution/demo](http://www.iwscoop.co.kr/solutio
 
     화면에 보이는 이미지를 가공하여 보기 좋은 이미지로 재생산 하는 기능을 사용할지 여부 결정.
 
->**thumbWidth**
-- Type : Number
-- Default : 200
-
-
-    썸네일의 가로 크기 지정.
-
->**thumbHeight**
-- Type : Number
-- Default : 160
-
-
-    쎔네일의 세로크기 지정.
-
 
 ----------------------------
 
@@ -262,6 +248,19 @@ viewer.observe('saveImage', function(data){
 
 
     주석 툴바 보일지 말지 설정.
+
+>**crop(rect, callback)**
+ - rect : {left: value, top:value, right:value, bottom:value} 처럼 위치 정보가 정의된 객체.
+ - callback(String src, bytearray binary){}
+    - base64 : crop된 이미지가 base64스트링으로 넘어옴.
+    - binary : crop된 이미지가 binary형태로 넘어옴. (String과 Binary 두가지를 같이 제공함.)
+
+
+    컷팅이미지 얻기
+
+>**destroy()**
+
+    뷰어 객체를 제거함.
 
 
 -------------------
