@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <script src="../../vendor/jquery-2.2.3.js"></script>      <!--필수 셋팅 해야함        -->
+    <link href="../../vendor/spectrum.css" rel="stylesheet">  <!--주석  사용할때만 필요    -->
+    <script src="../../vendor/spectrum.js"></script>          <!--주석  사용할때만 필요    -->
+    <script src="../../vendor/hammer.min.js"></script>        <!--터치 사용할때만 필요     -->
+    <link href="../../vendor/iws-scrollbar.css" rel="stylesheet">    <!--페이지뷰 스크롤바 사용     -->
+    <script src="../../vendor/iws-scrollbar.js"></script>     <!--페이지뷰 스크롤바 사용     -->
+    <script src="../../vendor/FileSaver.js"></script>         <!--로컬에 파일 저장할 경우에만 사용 -->
+
+    <link href="../../iws.viewer.css" rel="stylesheet">
+    <script src="../../iws.viewer.js"></script>
+
+
+    <script>
+        function LoadImageUrl(){
+            multiPage.loadUrl("http://localhost:8181/IWS_Solution/WebContent/solution/test/images/multi(bw).tif");
+        }
+
+        function Clear(){
+            multiPage.clear();
+        }
+        //Load local image file.
+        function LoadImage(){
+            document.getElementById("fileLoad").value = "";
+            $('#fileLoad').click();
+        };
+
+
+        var multiPage;
+        $(function() {  //  same this string ==> "$(document).ready(function() {});"
+
+            //Load local image file.
+            $('#fileLoad').on ('change', function(e){
+                var file = this.files[0];
+
+                var reader = new FileReader();
+                reader.onload = function() {
+                    //이미지를 기존 이미지에 추가합니다.
+                    multiPage.appendFile(reader.result);
+                };
+                reader.readAsArrayBuffer(file);
+            });
+
+            //뷰어 셋팅.
+            var element = document.getElementById("multiPage");
+            var opt = {
+                useAnnotation:false,
+                path:'../../'   ,
+                reSampleUse:false,
+            };
+            multiPage = new iws.multiPage(element, opt);
+
+            //버튼을 체크박스 값에 따라 보기 / 감추기 처리.
+            $(".show_hide").change(function(){
+                multiPage.showButton(this.id, this.checked);
+            });
+        });
+    </script>
+    <style>
+        nav>ul:before,
+        nav>ul:after {
+            content:" ";
+            display:block;
+        }
+        nav>ul:after {
+            clear:both;
+        }
+    </style>
+</head>
+<body>
+<ul>
+    <li><a href="http://www.iwscoop.co.kr">Homepage.</a></li>
+    <li><a href="http://www.iwscoop.co.kr/solution/demo/iws_viewer.html">Demo.</a></li>
+</ul>
+
+<div id="main_header">
+    <h2>Image load and save.</h2>
+    <nav id="main_gnb" >
+        <ul>
+            <li style="float:left;width:120px;"><a href="#" onclick="LoadImage()">Load File</a></li>
+            <li style="float:left;width:120px;"><a href="#" onclick="LoadImageUrl()">Http File</a></li>
+            <li style="float:left;width:120px;"><a href="#" onclick="Clear()">Clear</a></li>
+        </ul>
+        <input type="file" id="fileLoad" style="display:none"/>
+    </nav>
+    <nav>
+        <h2>Button show or hide.</h2>
+        <ul>
+            <li style="float:left;width:150px;list-style:none;"><input type="checkbox" class="show_hide" id="thumbnail"  checked="checked">썸네일창버튼</li>
+            <li style="float:left;width:150px;list-style:none;"><input type="checkbox" class="show_hide" id="print"  checked="checked">출력 버튼</li>
+            <li style="float:left;width:150px;list-style:none;"><input type="checkbox" class="show_hide" id="save"  checked="checked">저장 버튼</li>
+            <li style="float:left;width:150px;list-style:none;"><input type="checkbox" class="show_hide" id="select"  checked="checked">선택 버튼</li>
+            <li style="float:left;width:150px;list-style:none;"><input type="checkbox" class="show_hide" id="delete"  checked="checked">삭제 버튼</li>
+
+            <li style="float:left;width:150px;list-style:none;"><input type="checkbox" class="show_hide" id="move"  checked="checked">이동 버튼</li>
+            <li style="float:left;width:150px;list-style:none;"><input type="checkbox" class="show_hide" id="range"  checked="checked">영역지정 버튼</li>
+            <li style="float:left;width:150px;list-style:none;"><input type="checkbox" class="show_hide" id="glass"  checked="checked">돋보기 버튼</li>
+        </ul>
+    </nav>
+
+
+</div>
+<div id="content">
+    <!--  iwsViewer -->
+    <div id="multiPage" style="width:100%;height:700px;"></div>
+</div>
+
+</body>
+</html>
