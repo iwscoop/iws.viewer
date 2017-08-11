@@ -16,25 +16,49 @@
     <script src="../../iws.viewer.js"></script>
 
     <script>
+        function LoadImageUrl(){
+            multiPage.loadUrl("http://localhost:8181/IWS_Solution/WebContent/solution/test/images/multi(bw).tif");
+        }
+
+        function Clear(){
+            multiPage.clear();
+        }
+        //Load local image file.
+        function LoadImage(){
+            document.getElementById("fileLoad").value = "";
+            $('#fileLoad').click();
+        };
+
+
         var multiPage;
         $(function() {  //  same this string ==> "$(document).ready(function() {});"
+
+            //Load local image file.
+            $('#fileLoad').on ('change', function(e){
+                var file = this.files[0];
+
+                var reader = new FileReader();
+                reader.onload = function() {
+                    //이미지를 기존 이미지에 추가합니다.
+                    multiPage.appendFile(reader.result);
+                };
+                reader.readAsArrayBuffer(file);
+            });
+
             //뷰어 셋팅.
             var element = document.getElementById("multiPage");
             var opt = {
                 path:'../../'   ,
                 reSampleUse:false,
+                printAutoFit:true   //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>기본 값으로 프린트 옵션을 셋팅 할 수 있다.
             };
             multiPage = new iws.multiPage(element, opt);
 
-            //주석,필터보기
-            $(".visible_show_hide").change(function(){
-                multiPage.visible(this.id, (this.checked)?'show':'hide');
+            //출력때 페이지 폭을 계산하여 자동 회전하여 출력할지 설정함.(기본값 false)
+            $("#printAutoFit").change(function(){
+                multiPage.setPrintAutoFit(this.checked);
             });
 
-            //버튼을 체크박스 값에 따라 보기 / 감추기 처리.
-            $(".button_show_hide").change(function(){
-                multiPage.showButton(this.id, this.checked);
-            });
         });
     </script>
     <style>
@@ -58,27 +82,20 @@
     <nav id="main_gnb" >
         <h4>Image load and save.</h4>
         <ul>
-            <li style="float:left;width:150px;list-style:none;"><input type="checkbox" class="visible_show_hide" id="annotation"  >주석보기</li>
-            <li style="float:left;width:150px;list-style:none;"><input type="checkbox" class="visible_show_hide" id="filter"  >필터보기</li>
+            <li style="float:left;width:120px;"><a href="#" onclick="LoadImage()">Load File</a></li>
+            <li style="float:left;width:120px;"><a href="#" onclick="LoadImageUrl()">Http File</a></li>
+            <li style="float:left;width:120px;"><a href="#" onclick="Clear()">Clear</a></li>
         </ul>
+        <input type="file" id="fileLoad" style="display:none"/>
     </nav>
     <nav>
-        <h4>Button show or hide.</h4>
+        <h4>출력 옵션.</h4>
         <ul>
-            <li style="float:left;width:150px;list-style:none;"><input type="checkbox" class="button_show_hide" id="thumbnail"  checked="checked">썸네일창버튼</li>
-            <li style="float:left;width:150px;list-style:none;"><input type="checkbox" class="button_show_hide" id="print"  checked="checked">출력 버튼</li>
-            <li style="float:left;width:150px;list-style:none;"><input type="checkbox" class="button_show_hide" id="save"  checked="checked">저장 버튼</li>
-            <li style="float:left;width:150px;list-style:none;"><input type="checkbox" class="button_show_hide" id="select"  checked="checked">선택 버튼</li>
-            <li style="float:left;width:150px;list-style:none;"><input type="checkbox" class="button_show_hide" id="delete"  checked="checked">삭제 버튼</li>
-
-            <li style="float:left;width:150px;list-style:none;"><input type="checkbox" class="button_show_hide" id="move"  checked="checked">이동 버튼</li>
-            <li style="float:left;width:150px;list-style:none;"><input type="checkbox" class="button_show_hide" id="range"  checked="checked">영역지정 버튼</li>
-            <li style="float:left;width:150px;list-style:none;"><input type="checkbox" class="button_show_hide" id="glass"  checked="checked">돋보기 버튼</li>
+            <li style="float:left;width:150px;list-style:none;"><input type="checkbox" id="printAutoFit"  checked="checked">페이지 자동회전 출력</li>
         </ul>
     </nav>
-
-
 </div>
+
 <div id="content">
     <!--  iwsViewer -->
     <div id="multiPage" style="width:100%;height:700px;"></div>
