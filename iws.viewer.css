@@ -323,6 +323,19 @@ body.waitMe_body .waitMe_container.text > div {width:100%;top:45%;text-align:cen
 }
 /**************************************************************************************************************/
 
+.page-fullScreen{
+    position:relative;
+    width:100%;
+    height:100%;
+    /*background-color : rgba(255,0,0,0.9);  !*resize 테스트 때 사용하려구 넣어놓음*!*/
+}
+
+.page-container{
+    position:relative;
+    background-color:#666666;
+    overflow:hidden;
+}
+
 
 .iws-page{
     position:absolute;
@@ -515,13 +528,13 @@ body.waitMe_body .waitMe_container.text > div {width:100%;top:45%;text-align:cen
 /**************************************************************************************************************/
 
 .pop-annotation {
-/*  이전 툴바버튼 이용할때.
-    display: block;
-    position: absolute;
-    top: 2px;
-    right: 2px;
-    width: 80px;
-    !*display:none;*!*/
+    /*  이전 툴바버튼 이용할때.
+        display: block;
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        width: 80px;
+        !*display:none;*!*/
 
     width:102px;
     border : 1px dashed rgb(172,192,86);
@@ -741,114 +754,103 @@ body.waitMe_body .waitMe_container.text > div {width:100%;top:45%;text-align:cen
     - input range (Image Filter)
 */
 /**************************************************************************************************************/
-    .range-slider {
-        margin: 5px 0 0 0%;
-    }
+.range-slider {
+    margin: 5px 0 0 0%;
+}
 
-    .range-slider {
-        width: 100%;
-    }
-    .range-slider:before,
-    .range-slider:after{
-        display: table;
-        content: " ";
-    }
-    .range-slider:after{
-        clear:both;
-    }
+.range-slider {
+    width: 100%;
+}
+.range-slider:before,
+.range-slider:after{
+    display: table;
+    content: " ";
+}
+.range-slider:after{
+    clear:both;
+}
+.range-slider label{
+    margin-bottom: 2px;
+    font-weight: 400;
+}
+.range-label{
+    float:left;
+    width:80px;
+    text-align: right;
+    padding-right: 10px;
+}
+.range-input-wrap{
+    float:left;
+    width:calc(100% - (90px));
+}
+input[type=range].range-slider__range {
+    -webkit-appearance: none;
+    width: calc(100% - (73px));
+    height: 10px;
+    border-radius: 5px;
+    background: #d7dcdf;
+    outline: none;
+    padding: 0;
+    margin: 0;
+}
+input[type=range].range-slider__range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #2c3e50;
+    cursor: pointer;
+    -webkit-transition: background .15s ease-in-out;
+    transition: background .15s ease-in-out;
+}
+input[type=range].range-slider__range::-webkit-slider-thumb:hover {
+    background: #1abc9c;
+}
+input[type=range].range-slider__range:active::-webkit-slider-thumb {
+    background: #1abc9c;
+}
+.range-slider__value {
+    position: relative;
+    width: 60px;
+    color: #fff;
+    line-height: 20px;
+    text-align: center;
+    border-radius: 3px;
+    background: #2c3e50;
+    padding: 5px 10px;
+    margin-left: 8px;
+}
+.range-slider__value:after {
+    position: absolute;
+    top: 8px;
+    left: -7px;
+    width: 0;
+    height: 0;
+    border-top: 7px solid transparent;
+    border-right: 7px solid #2c3e50;
+    border-bottom: 7px solid transparent;
+    content: '';
+}
 
-    .range-label{
-        float:left;
-        width:80px;
-        text-align: right;
-        padding-right: 10px;
-    }
-    .range-input-wrap{
-        float:left;
-        width:calc(100% - (90px));
-    }
-    .range-slider__range {
-        -webkit-appearance: none;
-        width: calc(100% - (73px));
-        height: 10px;
-        border-radius: 5px;
-        background: #d7dcdf;
-        outline: none;
-        padding: 0;
-        margin: 0;
-    }
-    .range-slider__range::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        appearance: none;
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        background: #2c3e50;
-        cursor: pointer;
-        -webkit-transition: background .15s ease-in-out;
-        transition: background .15s ease-in-out;
-    }
-    .range-slider__range::-webkit-slider-thumb:hover {
-        background: #1abc9c;
-    }
-    .range-slider__range:active::-webkit-slider-thumb {
-        background: #1abc9c;
-    }
-    .range-slider__range::-moz-range-thumb {
-        width: 20px;
-        height: 20px;
-        border: 0;
-        border-radius: 50%;
-        background: #2c3e50;
-        cursor: pointer;
-        -webkit-transition: background .15s ease-in-out;
-        transition: background .15s ease-in-out;
-    }
-    .range-slider__range::-moz-range-thumb:hover {
-        background: #1abc9c;
-    }
-    .range-slider__range:active::-moz-range-thumb {
-        background: #1abc9c;
-    }
+.range-btn {
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+.range-btnGray {
+    background-color: white;
+    color: black;
+    border: 2px solid #e7e7e7;
+    /*margin-left:80px;*/
+    margin-top:10px;
+    width:100%;
+    height:30px;
+}
 
-    .range-slider__value {
-        position: relative;
-        width: 60px;
-        color: #fff;
-        line-height: 20px;
-        text-align: center;
-        border-radius: 3px;
-        background: #2c3e50;
-        padding: 5px 10px;
-        margin-left: 8px;
-    }
-    .range-slider__value:after {
-        position: absolute;
-        top: 8px;
-        left: -7px;
-        width: 0;
-        height: 0;
-        border-top: 7px solid transparent;
-        border-right: 7px solid #2c3e50;
-        border-bottom: 7px solid transparent;
-        content: '';
-    }
+.range-btnGray:hover {background-color: #e7e7e7;}
 
-    .range-btn {
-        -webkit-transition-duration: 0.4s; /* Safari */
-        transition-duration: 0.4s;
-    }
-    .range-btnGray {
-        background-color: white;
-        color: black;
-        border: 2px solid #e7e7e7;
-        /*margin-left:80px;*/
-        margin-top:10px;
-        width:100%;
-        height:30px;
-    }
+input[type=range] {
+    display: inline;
 
-    .range-btnGray:hover {background-color: #e7e7e7;}
-
-
+}
 /**************************************************************************************************************/
