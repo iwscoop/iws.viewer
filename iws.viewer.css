@@ -426,12 +426,12 @@ body.waitMe_body .waitMe_container.text > div {width:100%;top:45%;text-align:cen
 }
 
 .pageToolbar_Frame > .move{
-    font-family: JejuGothic;
+/*    font-family: JejuGothic;
     font-size: 8px;
     letter-spacing: 0.7px;
     text-align: left;
     color: #8e8e8e;
-    border: solid 1px rgba(118, 161, 235, 0.2);
+    border: solid 1px rgba(118, 161, 235, 0.2);*/
 }
 
 .pageToolbar_Frame > .zoom{
@@ -716,6 +716,7 @@ body.waitMe_body .waitMe_container.text > div {width:100%;top:45%;text-align:cen
     padding: 0.4em;
     box-sizing: border-box;
     font-family: 'Jeju Gothic', serif;
+    font-size:14px;
 }
 .ui-slideouttab-handle {
     cursor: pointer;
