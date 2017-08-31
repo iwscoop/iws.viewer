@@ -19,8 +19,21 @@ function LoadImageUrl(){
 
     //http://localhost:8080/IWS_Solution/WebContent/solution/test/images/multi(bw).tif
     var url = prompt("Please enter http url.", "http://");
-    multiPage.loadUrl(url);
-    //multiPage.appendUrl(url);
+    multiPage.appendUrl(url);
+
+    /**
+     * 여러파일 로드하여 보여주려면 배열로 처리한다.
+     */
+    // var url = ['http://192.168.0.11:8888/IWS_Solution/WebContent/solution/iws/viewer/a_001.jpg',
+    //     'http://192.168.0.11:8888/IWS_Solution/WebContent/solution/iws/viewer/a_002.jpg',
+    //     'http://192.168.0.11:8888/IWS_Solution/WebContent/solution/iws/viewer/a_003.jpg',
+    //     'http://192.168.0.11:8888/IWS_Solution/WebContent/solution/iws/viewer/a_004.jpg',
+    //     'http://192.168.0.11:8888/IWS_Solution/WebContent/solution/iws/viewer/a_005.jpg',
+    //     'http://192.168.0.11:8888/IWS_Solution/WebContent/solution/iws/viewer/a_006.jpg',
+    //     'http://192.168.0.11:8888/IWS_Solution/WebContent/solution/iws/viewer/a_007.jpg']
+    // multiPage.appendUrl(url, function(){
+    //     console.log('이미지 추가 완료');
+    // });
 };
 
 function SaveImage(){
@@ -37,9 +50,9 @@ $(function() {
         var reader = new FileReader();
         reader.onload = function() {
             //이미지를 새롭게 로딩 합니다.
-            multiPage.loadFile(reader.result);
+            //multiPage.loadFile(reader.result);
             //이미지를 기존 이미지에 추가합니다.
-            //multiPage.appendFile(reader.result);
+            multiPage.appendFile(reader.result);
         };
         reader.readAsArrayBuffer(file);
     });
