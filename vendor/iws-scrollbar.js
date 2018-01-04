@@ -1,1 +1,1734 @@
-"use strict";var iws=iws||{version:"1.0.0"};iws.lib={};iws.plugin={};iws.plugin.handler={};iws.lib.class=function(){"use strict";function t(t,e){var n=t.className.split(" ");if(n.indexOf(e)<0){n.push(e)}t.className=n.join(" ")}function e(t,e){var n=t.className.split(" ");var i=n.indexOf(e);if(i>=0){n.splice(i,1)}t.className=n.join(" ")}return{add:function(e,n){if(e.classList){e.classList.add(n)}else{t(e,n)}},remove:function(t,n){if(t.classList){t.classList.remove(n)}else{e(t,n)}},list:function(t){if(t.classList){return Array.prototype.slice.apply(t.classList)}else{return t.className.split(" ")}}}}();iws.lib.DOM=function(){"use strict";var t={};t.e=function(t,e){var n=document.createElement(t);n.className=e;return n};t.appendTo=function(t,e){e.appendChild(t);return t};function e(t,e){return window.getComputedStyle(t)[e]}function n(t,e,n){if(typeof n==="number"){n=n.toString()+"px"}t.style[e]=n;return t}function i(t,e){for(var n in e){var i=e[n];if(typeof i==="number"){i=i.toString()+"px"}t.style[n]=i}return t}t.css=function(t,r,l){if(typeof r==="object"){return i(t,r)}else{if(typeof l==="undefined"){return e(t,r)}else{return n(t,r,l)}}};t.matches=function(t,e){if(typeof t.matches!=="undefined"){return t.matches(e)}else{if(typeof t.matchesSelector!=="undefined"){return t.matchesSelector(e)}else if(typeof t.webkitMatchesSelector!=="undefined"){return t.webkitMatchesSelector(e)}else if(typeof t.mozMatchesSelector!=="undefined"){return t.mozMatchesSelector(e)}else if(typeof t.msMatchesSelector!=="undefined"){return t.msMatchesSelector(e)}}};t.remove=function(t){if(typeof t.remove!=="undefined"){t.remove()}else{if(t.parentNode){t.parentNode.removeChild(t)}}};t.queryChildren=function(e,n){return Array.prototype.filter.call(e.childNodes,function(e){return t.matches(e,n)})};return t}();iws.lib.EventManager=function(){"use strict";var t=function(t){this.element=t;this.events={}};t.prototype.bind=function(t,e){if(typeof this.events[t]==="undefined"){this.events[t]=[]}this.events[t].push(e);this.element.addEventListener(t,e,false)};t.prototype.unbind=function(t,e){var n=typeof e!=="undefined";this.events[t]=this.events[t].filter(function(i){if(n&&i!==e){return true}this.element.removeEventListener(t,i,false);return false},this)};t.prototype.unbindAll=function(){for(var t in this.events){this.unbind(t)}};var e=function(){this.eventElements=[]};e.prototype.eventElement=function(e){var n=this.eventElements.filter(function(t){return t.element===e})[0];if(typeof n==="undefined"){n=new t(e);this.eventElements.push(n)}return n};e.prototype.bind=function(t,e,n){this.eventElement(t).bind(e,n)};e.prototype.unbind=function(t,e,n){this.eventElement(t).unbind(e,n)};e.prototype.unbindAll=function(){for(var t=0;t<this.eventElements.length;t++){this.eventElements[t].unbindAll()}};e.prototype.once=function(t,e,n){var i=this.eventElement(t);var r=function(t){i.unbind(e,r);n(t)};i.bind(e,r)};return e}();iws.lib.guid=function(){"use strict";function t(){return Math.floor((1+Math.random())*65536).toString(16).substring(1)}return function(){return t()+t()+"-"+t()+"-"+t()+"-"+t()+"-"+t()+t()+t()}}();iws.lib.helper=function(){"use strict";var t=iws.lib.class;var e=iws.lib.DOM;var n={};var i=n.toInt=function(t){return parseInt(t,10)||0};var r=n.clone=function(t){if(t===null){return null}else if(t.constructor===Array){return t.map(r)}else if(typeof t==="object"){var e={};for(var n in t){e[n]=r(t[n])}return e}else{return t}};n.extend=function(t,e){var n=r(t);for(var i in e){n[i]=r(e[i])}return n};n.isEditable=function(t){return e.matches(t,"input,[contenteditable]")||e.matches(t,"select,[contenteditable]")||e.matches(t,"textarea,[contenteditable]")||e.matches(t,"button,[contenteditable]")};n.removePsClasses=function(e){var n=t.list(e);for(var i=0;i<n.length;i++){var r=n[i];if(r.indexOf("ps-")===0){t.remove(e,r)}}};n.outerWidth=function(t){return i(e.css(t,"width"))+i(e.css(t,"paddingLeft"))+i(e.css(t,"paddingRight"))+i(e.css(t,"borderLeftWidth"))+i(e.css(t,"borderRightWidth"))};n.startScrolling=function(e,n){t.add(e,"ps-in-scrolling");if(typeof n!=="undefined"){t.add(e,"ps-"+n)}else{t.add(e,"ps-x");t.add(e,"ps-y")}};n.stopScrolling=function(e,n){t.remove(e,"ps-in-scrolling");if(typeof n!=="undefined"){t.remove(e,"ps-"+n)}else{t.remove(e,"ps-x");t.remove(e,"ps-y")}};n.env={isWebKit:"WebkitAppearance"in document.documentElement.style,supportsTouch:"ontouchstart"in window||window.DocumentTouch&&document instanceof window.DocumentTouch,supportsIePointer:window.navigator.msMaxTouchPoints!==null};return n}();iws.plugin.defaultSetting=function(){"use strict";var t={customInfo:null,handlers:["click-rail","drag-scrollbar","keyboard","wheel","touch"],maxScrollbarLength:null,minScrollbarLength:null,scrollXMarginOffset:0,scrollYMarginOffset:0,stopPropagationOnClick:true,suppressScrollX:false,suppressScrollY:false,swipePropagation:true,useBothWheelAxes:false,wheelPropagation:false,wheelSpeed:1,theme:"default"};return t}();iws.plugin.instances=function(){"use strict";var t=iws.lib.helper;var e=iws.lib.class;var n=iws.plugin.defaultSetting;var i=iws.lib.DOM;var r=iws.lib.EventManager;var l=iws.lib.guid;var o={};function s(l){var o=this;o.settings=t.clone(n);o.containerWidth=null;o.containerHeight=null;o.contentWidth=null;o.contentHeight=null;o.contentLeft=null;o.contentTop=null;o.isRtl=i.css(l,"direction")==="rtl";o.isNegativeScroll=function(){var t=l.scrollLeft;var e=null;l.scrollLeft=-1;e=l.scrollLeft<0;l.scrollLeft=t;return e}();o.negativeScrollAdjustment=o.isNegativeScroll?l.scrollWidth-l.clientWidth:0;o.event=new r;o.ownerDocument=l.ownerDocument||document;function s(){e.add(l,"ps-focus")}function a(){e.remove(l,"ps-focus")}o.scrollbarXRail=i.appendTo(i.e("div","ps-scrollbar-x-rail"),l);o.scrollbarX=i.appendTo(i.e("div","ps-scrollbar-x"),o.scrollbarXRail);o.scrollbarX.setAttribute("tabindex",0);o.event.bind(o.scrollbarX,"focus",s);o.event.bind(o.scrollbarX,"blur",a);o.scrollbarXActive=null;o.scrollbarXWidth=null;o.scrollbarXLeft=null;o.scrollbarXBottom=t.toInt(i.css(o.scrollbarXRail,"bottom"));o.isScrollbarXUsingBottom=o.scrollbarXBottom===o.scrollbarXBottom;o.scrollbarXTop=o.isScrollbarXUsingBottom?null:t.toInt(i.css(o.scrollbarXRail,"top"));o.railBorderXWidth=t.toInt(i.css(o.scrollbarXRail,"borderLeftWidth"))+t.toInt(i.css(o.scrollbarXRail,"borderRightWidth"));i.css(o.scrollbarXRail,"display","block");o.railXMarginWidth=t.toInt(i.css(o.scrollbarXRail,"marginLeft"))+t.toInt(i.css(o.scrollbarXRail,"marginRight"));i.css(o.scrollbarXRail,"display","");o.railXWidth=null;o.railXRatio=null;o.scrollbarYRail=i.appendTo(i.e("div","ps-scrollbar-y-rail"),l);o.scrollbarY=i.appendTo(i.e("div","ps-scrollbar-y"),o.scrollbarYRail);o.scrollbarY.setAttribute("tabindex",0);o.event.bind(o.scrollbarY,"focus",s);o.event.bind(o.scrollbarY,"blur",a);o.scrollbarYActive=null;o.scrollbarYHeight=null;o.scrollbarYTop=null;o.scrollbarYRight=t.toInt(i.css(o.scrollbarYRail,"right"));o.isScrollbarYUsingRight=o.scrollbarYRight===o.scrollbarYRight;o.scrollbarYLeft=o.isScrollbarYUsingRight?null:t.toInt(i.css(o.scrollbarYRail,"left"));o.scrollbarYOuterWidth=o.isRtl?t.outerWidth(o.scrollbarY):null;o.railBorderYWidth=t.toInt(i.css(o.scrollbarYRail,"borderTopWidth"))+t.toInt(i.css(o.scrollbarYRail,"borderBottomWidth"));i.css(o.scrollbarYRail,"display","block");o.railYMarginHeight=t.toInt(i.css(o.scrollbarYRail,"marginTop"))+t.toInt(i.css(o.scrollbarYRail,"marginBottom"));i.css(o.scrollbarYRail,"display","");o.railYHeight=null;o.railYRatio=null}function a(t){return t.getAttribute("data-ps-id")}function c(t,e){t.setAttribute("data-ps-id",e)}function u(t){t.removeAttribute("data-ps-id")}return{add:function(t){var e=l();c(t,e);o[e]=new s(t);return o[e]},remove:function(t){delete o[a(t)];u(t)},get:function(t){return o[a(t)]}}}();iws.plugin.updateScroll=function(){"use strict";var t=iws.plugin.instances;var e;var n;var i=function(t){var e=document.createEvent("Event");e.initEvent(t,true,true);return e};return function(r,l,o){if(typeof r==="undefined"){throw"You must provide an element to the update-scroll function"}if(typeof l==="undefined"){throw"You must provide an axis to the update-scroll function"}if(typeof o==="undefined"){throw"You must provide a value to the update-scroll function"}if(l==="top"&&o<=0){r.scrollTop=o=0;r.dispatchEvent(i("ps-y-reach-start"))}if(l==="left"&&o<=0){r.scrollLeft=o=0;r.dispatchEvent(i("ps-x-reach-start"))}var s=t.get(r);if(l==="top"&&o>=s.contentHeight-s.containerHeight){o=s.contentHeight-s.containerHeight;if(o-r.scrollTop<=1){o=r.scrollTop}else{r.scrollTop=o}r.dispatchEvent(i("ps-y-reach-end"))}if(l==="left"&&o>=s.contentWidth-s.containerWidth){o=s.contentWidth-s.containerWidth;if(o-r.scrollLeft<=1){o=r.scrollLeft}else{r.scrollLeft=o}r.dispatchEvent(i("ps-x-reach-end"))}if(!e){e=r.scrollTop}if(!n){n=r.scrollLeft}if(l==="top"&&o<e){r.dispatchEvent(i("ps-scroll-up"))}if(l==="top"&&o>e){r.dispatchEvent(i("ps-scroll-down"))}if(l==="left"&&o<n){r.dispatchEvent(i("ps-scroll-left"))}if(l==="left"&&o>n){r.dispatchEvent(i("ps-scroll-right"))}if(l==="top"){r.scrollTop=e=o;r.dispatchEvent(i("ps-scroll-y"))}if(l==="left"){r.scrollLeft=n=o;r.dispatchEvent(i("ps-scroll-x"))}}}();iws.plugin.updateGeometry=function(){"use strict";var t=iws.lib.helper;var e=iws.lib.class;var n=iws.lib.DOM;var i=iws.plugin.instances;var r=iws.plugin.updateScroll;function l(t,e){if(t.settings.minScrollbarLength){e=Math.max(e,t.settings.minScrollbarLength)}if(t.settings.maxScrollbarLength){e=Math.min(e,t.settings.maxScrollbarLength)}return e}function o(t,e){var i={width:e.railXWidth};if(e.isRtl){i.left=e.negativeScrollAdjustment+t.scrollLeft+e.containerWidth-e.contentWidth}else{i.left=t.scrollLeft}if(e.isScrollbarXUsingBottom){i.bottom=e.scrollbarXBottom-t.scrollTop}else{i.top=e.scrollbarXTop+t.scrollTop}n.css(e.scrollbarXRail,i);var r={top:t.scrollTop,height:e.railYHeight};if(e.isScrollbarYUsingRight){if(e.isRtl){r.right=e.contentWidth-(e.negativeScrollAdjustment+t.scrollLeft)-e.scrollbarYRight-e.scrollbarYOuterWidth}else{r.right=e.scrollbarYRight-t.scrollLeft}}else{if(e.isRtl){r.left=e.negativeScrollAdjustment+t.scrollLeft+e.containerWidth*2-e.contentWidth-e.scrollbarYLeft-e.scrollbarYOuterWidth}else{r.left=e.scrollbarYLeft+t.scrollLeft}}n.css(e.scrollbarYRail,r);n.css(e.scrollbarX,{left:e.scrollbarXLeft,width:e.scrollbarXWidth-e.railBorderXWidth});n.css(e.scrollbarY,{top:e.scrollbarYTop,height:e.scrollbarYHeight-e.railBorderYWidth})}return function(s){var a=i.get(s);a.containerWidth=s.clientWidth;a.containerHeight=s.clientHeight;if(a.settings.customInfo==null){a.contentWidth=s.scrollWidth;a.contentHeight=s.scrollHeight;a.contentLeft=s.scrollLeft;a.contentTop=s.scrollTop}else{var c=a.settings.customInfo.getContentInfo();a.contentWidth=c.scrollWidth;a.contentHeight=c.scrollHeight;a.contentLeft=c.scrollLeft;a.contentTop=c.scrollTop}var u;if(!s.contains(a.scrollbarXRail)){u=n.queryChildren(s,".ps-scrollbar-x-rail");if(u.length>0){u.forEach(function(t){n.remove(t)})}n.appendTo(a.scrollbarXRail,s)}if(!s.contains(a.scrollbarYRail)){u=n.queryChildren(s,".ps-scrollbar-y-rail");if(u.length>0){u.forEach(function(t){n.remove(t)})}n.appendTo(a.scrollbarYRail,s)}if(!a.settings.suppressScrollX&&a.containerWidth+a.settings.scrollXMarginOffset<a.contentWidth){a.scrollbarXActive=true;a.railXWidth=a.containerWidth-a.railXMarginWidth;a.railXRatio=a.containerWidth/a.railXWidth;a.scrollbarXWidth=l(a,t.toInt(a.railXWidth*a.containerWidth/a.contentWidth));a.scrollbarXLeft=t.toInt((a.negativeScrollAdjustment+a.contentLeft)*(a.railXWidth-a.scrollbarXWidth)/(a.contentWidth-a.containerWidth))}else{a.scrollbarXActive=false}if(!a.settings.suppressScrollY&&a.containerHeight+a.settings.scrollYMarginOffset<a.contentHeight){a.scrollbarYActive=true;a.railYHeight=a.containerHeight-a.railYMarginHeight;a.railYRatio=a.containerHeight/a.railYHeight;a.scrollbarYHeight=l(a,t.toInt(a.railYHeight*a.containerHeight/a.contentHeight));a.scrollbarYTop=t.toInt(a.contentTop*(a.railYHeight-a.scrollbarYHeight)/(a.contentHeight-a.containerHeight))}else{a.scrollbarYActive=false}if(a.scrollbarXLeft>=a.railXWidth-a.scrollbarXWidth){a.scrollbarXLeft=a.railXWidth-a.scrollbarXWidth}if(a.scrollbarYTop>=a.railYHeight-a.scrollbarYHeight){a.scrollbarYTop=a.railYHeight-a.scrollbarYHeight}o(s,a);if(a.scrollbarXActive){e.add(s,"ps-active-x")}else{e.remove(s,"ps-active-x");a.scrollbarXWidth=0;a.scrollbarXLeft=0;r(s,"left",0)}if(a.scrollbarYActive){e.add(s,"ps-active-y")}else{e.remove(s,"ps-active-y");a.scrollbarYHeight=0;a.scrollbarYTop=0;r(s,"top",0)}}}();iws.plugin.handler.clickRail=function(){"use strict";var t=iws.lib.helper;var e=iws.plugin.instances;var n=iws.plugin.updateGeometry;var i=iws.plugin.updateScroll;function r(e,r){function l(t){return t.getBoundingClientRect()}var o=function(t){t.stopPropagation()};if(r.settings.stopPropagationOnClick){r.event.bind(r.scrollbarY,"click",o)}r.event.bind(r.scrollbarYRail,"click",function(o){var s=t.toInt(r.scrollbarYHeight/2);var a=r.railYRatio*(o.pageY-window.pageYOffset-l(r.scrollbarYRail).top-s);var c=r.railYRatio*(r.railYHeight-r.scrollbarYHeight);var u=a/c;if(u<0){u=0}else if(u>1){u=1}if(r.settings.customInfo){var f=(r.contentHeight-r.containerHeight)*u;var p={direction:"top",value:-f};r.settings.customInfo.setContentInfo&&r.settings.customInfo.setContentInfo(p)}else{i(e,"top",(r.contentHeight-r.containerHeight)*u)}n(e);o.stopPropagation()});if(r.settings.stopPropagationOnClick){r.event.bind(r.scrollbarX,"click",o)}r.event.bind(r.scrollbarXRail,"click",function(o){var s=t.toInt(r.scrollbarXWidth/2);var a=r.railXRatio*(o.pageX-window.pageXOffset-l(r.scrollbarXRail).left-s);var c=r.railXRatio*(r.railXWidth-r.scrollbarXWidth);var u=a/c;if(u<0){u=0}else if(u>1){u=1}if(r.settings.customInfo){var f=(r.contentWidth-r.containerWidth)*u-r.negativeScrollAdjustment;var p={direction:"left",value:-f};r.settings.customInfo.setContentInfo&&r.settings.customInfo.setContentInfo(p)}else{i(e,"left",(r.contentWidth-r.containerWidth)*u-r.negativeScrollAdjustment)}n(e);o.stopPropagation()})}return function(t){var n=e.get(t);r(t,n)}}();iws.plugin.handler.dragScrollbar=function(){"use strict";var t=iws.lib.helper;var e=iws.lib.DOM;var n=iws.plugin.instances;var i=iws.plugin.updateGeometry;var r=iws.plugin.updateScroll;function l(n,l){var o=null;var s=null;function a(e){var i=o+e*l.railXRatio;var s=Math.max(0,l.scrollbarXRail.getBoundingClientRect().left)+l.railXRatio*(l.railXWidth-l.scrollbarXWidth);if(i<0){l.scrollbarXLeft=0}else if(i>s){l.scrollbarXLeft=s}else{l.scrollbarXLeft=i}var a=t.toInt(l.scrollbarXLeft*(l.contentWidth-l.containerWidth)/(l.containerWidth-l.railXRatio*l.scrollbarXWidth))-l.negativeScrollAdjustment;if(l.settings.customInfo){var c={direction:"left",value:-a};l.settings.customInfo.setContentInfo&&l.settings.customInfo.setContentInfo(c)}else{r(n,"left",a)}}var c=function(t){a(t.pageX-s);i(n);t.stopPropagation();t.preventDefault()};var u=function(){t.stopScrolling(n,"x");l.event.unbind(l.ownerDocument,"mousemove",c)};l.event.bind(l.scrollbarX,"mousedown",function(i){s=i.pageX;o=t.toInt(e.css(l.scrollbarX,"left"))*l.railXRatio;t.startScrolling(n,"x");l.event.bind(l.ownerDocument,"mousemove",c);l.event.once(l.ownerDocument,"mouseup",u);i.stopPropagation();i.preventDefault()})}function o(n,l){var o=null;var s=null;function a(e){var i=o+e*l.railYRatio;var s=Math.max(0,l.scrollbarYRail.getBoundingClientRect().top)+l.railYRatio*(l.railYHeight-l.scrollbarYHeight);if(i<0){l.scrollbarYTop=0}else if(i>s){l.scrollbarYTop=s}else{l.scrollbarYTop=i}var a=t.toInt(l.scrollbarYTop*(l.contentHeight-l.containerHeight)/(l.containerHeight-l.railYRatio*l.scrollbarYHeight));if(l.settings.customInfo){var c={direction:"top",value:-a};l.settings.customInfo.setContentInfo&&l.settings.customInfo.setContentInfo(c)}else{r(n,"top",a)}}var c=function(t){a(t.pageY-s);i(n);t.stopPropagation();t.preventDefault()};var u=function(){t.stopScrolling(n,"y");l.event.unbind(l.ownerDocument,"mousemove",c)};l.event.bind(l.scrollbarY,"mousedown",function(i){s=i.pageY;o=t.toInt(e.css(l.scrollbarY,"top"))*l.railYRatio;t.startScrolling(n,"y");l.event.bind(l.ownerDocument,"mousemove",c);l.event.once(l.ownerDocument,"mouseup",u);i.stopPropagation();i.preventDefault()})}return function(t){var e=n.get(t);l(t,e);o(t,e)}}();iws.plugin.handler.keyboard=function(){"use strict";var t=iws.lib.helper;var e=iws.lib.DOM;var n=iws.plugin.instances;var i=iws.plugin.updateGeometry;var r=iws.plugin.updateScroll;function l(n,l){var o=false;l.event.bind(n,"mouseenter",function(){o=true});l.event.bind(n,"mouseleave",function(){o=false});var s=false;function a(t,e){var i=n.scrollTop;if(t===0){if(!l.scrollbarYActive){return false}if(i===0&&e>0||i>=l.contentHeight-l.containerHeight&&e<0){return!l.settings.wheelPropagation}}var r=n.scrollLeft;if(e===0){if(!l.scrollbarXActive){return false}if(r===0&&t<0||r>=l.contentWidth-l.containerWidth&&t>0){return!l.settings.wheelPropagation}}return true}l.event.bind(l.ownerDocument,"keydown",function(c){if(c.isDefaultPrevented&&c.isDefaultPrevented()||c.defaultPrevented){return}var u=e.matches(l.scrollbarX,":focus")||e.matches(l.scrollbarY,":focus");if(!o&&!u){return}var f=document.activeElement?document.activeElement:l.ownerDocument.activeElement;if(f){if(f.tagName==="IFRAME"){f=f.contentDocument.activeElement}else{while(f.shadowRoot){f=f.shadowRoot.activeElement}}if(t.isEditable(f)){return}}var p=0;var d=0;switch(c.which){case 37:p=-30;break;case 38:d=30;break;case 39:p=30;break;case 40:d=-30;break;case 33:d=90;break;case 32:if(c.shiftKey){d=90}else{d=-90}break;case 34:d=-90;break;case 35:if(c.ctrlKey){d=-l.contentHeight}else{d=-l.containerHeight}break;case 36:if(c.ctrlKey){d=n.scrollTop}else{d=l.containerHeight}break;default:return}r(n,"top",n.scrollTop-d);r(n,"left",n.scrollLeft+p);i(n);s=a(p,d);if(s){c.preventDefault()}})}return function(t){var e=n.get(t);l(t,e)}}();iws.plugin.handler.mouseWheel=function(){"use strict";var t=iws.plugin.instances;var e=iws.plugin.updateGeometry;var n=iws.plugin.updateScroll;function i(t,i){var r=false;function l(e,n){var r=t.scrollTop;if(e===0){if(!i.scrollbarYActive){return false}if(r===0&&n>0||r>=i.contentHeight-i.containerHeight&&n<0){return!i.settings.wheelPropagation}}var l=t.scrollLeft;if(n===0){if(!i.scrollbarXActive){return false}if(l===0&&e<0||l>=i.contentWidth-i.containerWidth&&e>0){return!i.settings.wheelPropagation}}return true}function o(t){var e=t.deltaX;var n=-1*t.deltaY;if(typeof e==="undefined"||typeof n==="undefined"){e=-1*t.wheelDeltaX/6;n=t.wheelDeltaY/6}if(t.deltaMode&&t.deltaMode===1){e*=10;n*=10}if(e!==e&&n!==n){e=0;n=t.wheelDelta}return[e,n]}function s(e,n){var i=t.querySelector("textarea:hover, select[multiple]:hover, .ps-child:hover");if(i){if(i.tagName!=="TEXTAREA"&&!window.getComputedStyle(i).overflow.match(/(scroll|auto)/)){return false}var r=i.scrollHeight-i.clientHeight;if(r>0){if(!(i.scrollTop===0&&n>0)&&!(i.scrollTop===r&&n<0)){return true}}var l=i.scrollLeft-i.clientWidth;if(l>0){if(!(i.scrollLeft===0&&e<0)&&!(i.scrollLeft===l&&e>0)){return true}}}return false}function a(a){var c=o(a);var u=c[0];var f=c[1];if(s(u,f)){return}r=false;if(!i.settings.useBothWheelAxes){n(t,"top",t.scrollTop-f*i.settings.wheelSpeed);n(t,"left",t.scrollLeft+u*i.settings.wheelSpeed)}else if(i.scrollbarYActive&&!i.scrollbarXActive){if(f){n(t,"top",t.scrollTop-f*i.settings.wheelSpeed)}else{n(t,"top",t.scrollTop+u*i.settings.wheelSpeed)}r=true}else if(i.scrollbarXActive&&!i.scrollbarYActive){if(u){n(t,"left",t.scrollLeft+u*i.settings.wheelSpeed)}else{n(t,"left",t.scrollLeft-f*i.settings.wheelSpeed)}r=true}e(t);r=r||l(u,f);if(r){a.stopPropagation();a.preventDefault()}}if(typeof window.onwheel!=="undefined"){i.event.bind(t,"wheel",a)}else if(typeof window.onmousewheel!=="undefined"){i.event.bind(t,"mousewheel",a)}}return function(e){var n=t.get(e);i(e,n)}}();iws.plugin.handler.nativeScroll=function(){"use strict";var t=iws.plugin.instances;var e=iws.plugin.updateGeometry;function n(t,n){n.event.bind(t,"scroll",function(){e(t)})}return function(e){var i=t.get(e);n(e,i)}}();iws.plugin.handler.selection=function(){"use strict";var t=iws.lib.helper;var e=iws.plugin.instances;var n=iws.plugin.updateGeometry;var i=iws.plugin.updateScroll;function r(r,l){function o(){var t=window.getSelection?window.getSelection():document.getSelection?document.getSelection():"";if(t.toString().length===0){return null}else{return t.getRangeAt(0).commonAncestorContainer}}var s=null;var a={top:0,left:0};function c(){if(!s){s=setInterval(function(){if(!e.get(r)){clearInterval(s);return}i(r,"top",r.scrollTop+a.top);i(r,"left",r.scrollLeft+a.left);n(r)},50)}}function u(){if(s){clearInterval(s);s=null}t.stopScrolling(r)}var f=false;l.event.bind(l.ownerDocument,"selectionchange",function(){if(r.contains(o())){f=true}else{f=false;u()}});l.event.bind(window,"mouseup",function(){if(f){f=false;u()}});l.event.bind(window,"mousemove",function(e){if(f){var n={x:e.pageX,y:e.pageY};var i={left:r.offsetLeft,right:r.offsetLeft+r.offsetWidth,top:r.offsetTop,bottom:r.offsetTop+r.offsetHeight};if(n.x<i.left+3){a.left=-5;t.startScrolling(r,"x")}else if(n.x>i.right-3){a.left=5;t.startScrolling(r,"x")}else{a.left=0}if(n.y<i.top+3){if(i.top+3-n.y<5){a.top=-5}else{a.top=-20}t.startScrolling(r,"y")}else if(n.y>i.bottom-3){if(n.y-i.bottom+3<5){a.top=5}else{a.top=20}t.startScrolling(r,"y")}else{a.top=0}if(a.top===0&&a.left===0){u()}else{c()}}})}return function(t){var n=e.get(t);r(t,n)}}();iws.plugin.handler.touch=function(){"use strict";var t=iws.lib.helper;var e=iws.plugin.instances;var n=iws.plugin.updateGeometry;var i=iws.plugin.updateScroll;function r(t,r,l,o){function s(e,n){var i=t.scrollTop;var l=t.scrollLeft;var o=Math.abs(e);var s=Math.abs(n);if(s>o){if(n<0&&i===r.contentHeight-r.containerHeight||n>0&&i===0){return!r.settings.swipePropagation}}else if(o>s){if(e<0&&l===r.contentWidth-r.containerWidth||e>0&&l===0){return!r.settings.swipePropagation}}return true}function a(e,r){i(t,"top",t.scrollTop-r);i(t,"left",t.scrollLeft-e);n(t)}var c={};var u=0;var f={};var p=null;var d=false;var v=false;function h(){d=true}function g(){d=false}function b(t){if(t.targetTouches){return t.targetTouches[0]}else{return t}}function m(t){if(t.targetTouches&&t.targetTouches.length===1){return true}if(t.pointerType&&t.pointerType!=="mouse"&&t.pointerType!==t.MSPOINTER_TYPE_MOUSE){return true}return false}function w(t){if(m(t)){v=true;var e=b(t);c.pageX=e.pageX;c.pageY=e.pageY;u=(new Date).getTime();if(p!==null){clearInterval(p)}t.stopPropagation()}}function Y(t){if(!v&&r.settings.swipePropagation){w(t)}if(!d&&v&&m(t)){var e=b(t);var n={pageX:e.pageX,pageY:e.pageY};var i=n.pageX-c.pageX;var l=n.pageY-c.pageY;a(i,l);c=n;var o=(new Date).getTime();var p=o-u;if(p>0){f.x=i/p;f.y=l/p;u=o}if(s(i,l)){t.stopPropagation();t.preventDefault()}}}function X(){if(!d&&v){v=false;clearInterval(p);p=setInterval(function(){if(!e.get(t)){clearInterval(p);return}if(!f.x&&!f.y){clearInterval(p);return}if(Math.abs(f.x)<.01&&Math.abs(f.y)<.01){clearInterval(p);return}a(f.x*30,f.y*30);f.x*=.8;f.y*=.8},10)}}if(l){r.event.bind(window,"touchstart",h);r.event.bind(window,"touchend",g);r.event.bind(t,"touchstart",w);r.event.bind(t,"touchmove",Y);r.event.bind(t,"touchend",X)}if(o){if(window.PointerEvent){r.event.bind(window,"pointerdown",h);r.event.bind(window,"pointerup",g);r.event.bind(t,"pointerdown",w);r.event.bind(t,"pointermove",Y);r.event.bind(t,"pointerup",X)}else if(window.MSPointerEvent){r.event.bind(window,"MSPointerDown",h);r.event.bind(window,"MSPointerUp",g);r.event.bind(t,"MSPointerDown",w);r.event.bind(t,"MSPointerMove",Y);r.event.bind(t,"MSPointerUp",X)}}}return function(n){if(!t.env.supportsTouch&&!t.env.supportsIePointer){return}var i=e.get(n);r(n,i,t.env.supportsTouch,t.env.supportsIePointer)}}();iws.plugin.initialize=function(){"use strict";var t=iws.lib.helper;var e=iws.lib.class;var n=iws.plugin.instances;var i=iws.plugin.updateGeometry;var r={"click-rail":iws.plugin.handler.clickRail,"drag-scrollbar":iws.plugin.handler.dragScrollbar,keyboard:iws.plugin.handler.keyboard,wheel:iws.plugin.handler.mouseWheel,touch:iws.plugin.handler.touch,selection:iws.plugin.handler.selection};var l=iws.plugin.handler.nativeScroll;return function(o,s){s=typeof s==="object"?s:{};e.add(o,"ps-container");var a=n.add(o);a.settings=t.extend(a.settings,s);e.add(o,"ps-theme-"+a.settings.theme);a.settings.handlers.forEach(function(t){r[t]&&r[t](o)});l(o);i(o)}}();iws.plugin.update=function(){"use strict";var t=iws.lib.helper;var e=iws.lib.DOM;var n=iws.plugin.instances;var i=iws.plugin.updateGeometry;var r=iws.plugin.updateScroll;return function(l){var o=n.get(l);if(!o){return}o.negativeScrollAdjustment=o.isNegativeScroll?l.scrollWidth-l.clientWidth:0;e.css(o.scrollbarXRail,"display","block");e.css(o.scrollbarYRail,"display","block");o.railXMarginWidth=t.toInt(e.css(o.scrollbarXRail,"marginLeft"))+t.toInt(e.css(o.scrollbarXRail,"marginRight"));o.railYMarginHeight=t.toInt(e.css(o.scrollbarYRail,"marginTop"))+t.toInt(e.css(o.scrollbarYRail,"marginBottom"));e.css(o.scrollbarXRail,"display","none");e.css(o.scrollbarYRail,"display","none");i(l);r(l,"top",l.scrollTop);r(l,"left",l.scrollLeft);e.css(o.scrollbarXRail,"display","");e.css(o.scrollbarYRail,"display","")}}();iws.plugin.destroy=function(){"use strict";var t=iws.lib.helper;var e=iws.lib.DOM;var n=iws.plugin.instances;return function(i){var r=n.get(i);if(!r){return}r.event.unbindAll();e.remove(r.scrollbarX);e.remove(r.scrollbarY);e.remove(r.scrollbarXRail);e.remove(r.scrollbarYRail);t.removePsClasses(i);n.remove(i)}};iws.scroll=function(){"use strict";var t=iws.plugin.destroy;var e=iws.plugin.initialize;var n=iws.plugin.update;return{initialize:e,update:n,destroy:t}}();
+/**
+ * Created by ojb74 on 2017-04-04.
+ */
+'use strict';
+var iws = iws || {version:"1.0.0"};
+
+iws.lib     = {};
+iws.plugin  = {};
+iws.plugin.handler = {};
+
+/***********************************************************************************************************************
+ *                                                                                                         iws.lib.class
+ * @type {{add, remove, list}}
+ */
+iws.lib.class = (function(){
+  'use strict';
+
+  function oldAdd(element, className) {
+    var classes = element.className.split(' ');
+    if (classes.indexOf(className) < 0) {
+      classes.push(className);
+    }
+    element.className = classes.join(' ');
+  }
+
+  function oldRemove(element, className) {
+    var classes = element.className.split(' ');
+    var idx = classes.indexOf(className);
+    if (idx >= 0) {
+      classes.splice(idx, 1);
+    }
+    element.className = classes.join(' ');
+  }
+
+  return {
+    add : function (element, className) {
+      if (element.classList) {
+        element.classList.add(className);
+      } else {
+        oldAdd(element, className);
+      }
+    },
+
+    remove : function (element, className) {
+      if (element.classList) {
+        element.classList.remove(className);
+      } else {
+        oldRemove(element, className);
+      }
+    },
+
+    list : function (element) {
+      if (element.classList) {
+        return Array.prototype.slice.apply(element.classList);
+      } else {
+        return element.className.split(' ');
+      }
+    }
+  };
+
+})();
+
+/***********************************************************************************************************************
+ *                                                                                                           iws.lib.DOM
+ */
+iws.lib.DOM = (function(){
+
+  'use strict';
+
+  var DOM = {};
+
+  DOM.e = function (tagName, className) {
+    var element = document.createElement(tagName);
+    element.className = className;
+    return element;
+  };
+
+  DOM.appendTo = function (child, parent) {
+    parent.appendChild(child);
+    return child;
+  };
+
+  function cssGet(element, styleName) {
+    return window.getComputedStyle(element)[styleName];
+  }
+
+  function cssSet(element, styleName, styleValue) {
+    if (typeof styleValue === 'number') {
+      styleValue = styleValue.toString() + 'px';
+    }
+    element.style[styleName] = styleValue;
+    return element;
+  }
+
+  function cssMultiSet(element, obj) {
+    for (var key in obj) {
+      var val = obj[key];
+      if (typeof val === 'number') {
+        val = val.toString() + 'px';
+      }
+      element.style[key] = val;
+    }
+    return element;
+  }
+
+  DOM.css = function (element, styleNameOrObject, styleValue) {
+    if (typeof styleNameOrObject === 'object') {
+      // multiple set with object
+      return cssMultiSet(element, styleNameOrObject);
+    } else {
+      if (typeof styleValue === 'undefined') {
+        return cssGet(element, styleNameOrObject);
+      } else {
+        return cssSet(element, styleNameOrObject, styleValue);
+      }
+    }
+  };
+
+  DOM.matches = function (element, query) {
+    if (typeof element.matches !== 'undefined') {
+      return element.matches(query);
+    } else {
+      if (typeof element.matchesSelector !== 'undefined') {
+        return element.matchesSelector(query);
+      } else if (typeof element.webkitMatchesSelector !== 'undefined') {
+        return element.webkitMatchesSelector(query);
+      } else if (typeof element.mozMatchesSelector !== 'undefined') {
+        return element.mozMatchesSelector(query);
+      } else if (typeof element.msMatchesSelector !== 'undefined') {
+        return element.msMatchesSelector(query);
+      }
+    }
+  };
+
+  DOM.remove = function (element) {
+    if (typeof element.remove !== 'undefined') {
+      element.remove();
+    } else {
+      if (element.parentNode) {
+        element.parentNode.removeChild(element);
+      }
+    }
+  };
+
+  DOM.queryChildren = function (element, selector) {
+    return Array.prototype.filter.call(element.childNodes, function (child) {
+      return DOM.matches(child, selector);
+    });
+  };
+
+  return DOM;
+})();
+
+/***********************************************************************************************************************
+ *                                                                                                  iws.lib.EventManager
+ */
+iws.lib.EventManager = (function(){
+
+  'use strict';
+
+  var EventElement = function (element) {
+    this.element = element;
+    this.events = {};
+  };
+
+  EventElement.prototype.bind = function (eventName, handler) {
+    if (typeof this.events[eventName] === 'undefined') {
+      this.events[eventName] = [];
+    }
+    this.events[eventName].push(handler);
+    this.element.addEventListener(eventName, handler, false);
+  };
+
+  EventElement.prototype.unbind = function (eventName, handler) {
+    var isHandlerProvided = (typeof handler !== 'undefined');
+    this.events[eventName] = this.events[eventName].filter(function (hdlr) {
+      if (isHandlerProvided && hdlr !== handler) {
+        return true;
+      }
+      this.element.removeEventListener(eventName, hdlr, false);
+      return false;
+    }, this);
+  };
+
+  EventElement.prototype.unbindAll = function () {
+    for (var name in this.events) {
+      this.unbind(name);
+    }
+  };
+
+  var EventManager = function () {
+    this.eventElements = [];
+  };
+
+  EventManager.prototype.eventElement = function (element) {
+    var ee = this.eventElements.filter(function (eventElement) {
+      return eventElement.element === element;
+    })[0];
+    if (typeof ee === 'undefined') {
+      ee = new EventElement(element);
+      this.eventElements.push(ee);
+    }
+    return ee;
+  };
+
+  EventManager.prototype.bind = function (element, eventName, handler) {
+    this.eventElement(element).bind(eventName, handler);
+  };
+
+  EventManager.prototype.unbind = function (element, eventName, handler) {
+    this.eventElement(element).unbind(eventName, handler);
+  };
+
+  EventManager.prototype.unbindAll = function () {
+    for (var i = 0; i < this.eventElements.length; i++) {
+      this.eventElements[i].unbindAll();
+    }
+  };
+
+  EventManager.prototype.once = function (element, eventName, handler) {
+    var ee = this.eventElement(element);
+    var onceHandler = function (e) {
+      ee.unbind(eventName, onceHandler);
+      handler(e);
+    };
+    ee.bind(eventName, onceHandler);
+  };
+
+  return EventManager;
+})();
+
+/***********************************************************************************************************************
+ *                                                                                                          iws.lib.guid
+ */
+iws.lib.guid = (function () {
+  'use strict';
+
+  function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000)
+      .toString(16)
+      .substring(1);
+  }
+  return function () {
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+      s4() + '-' + s4() + s4() + s4();
+  };
+})();
+
+
+/***********************************************************************************************************************
+ *                                                                                                        iws.lib.helper
+ */
+iws.lib.helper = (function(){
+  'use strict';
+
+  var cls = iws.lib.class;    //require('./class');
+  var dom = iws.lib.DOM;    //require('./dom');
+
+  var helper = {};
+
+  var toInt = helper.toInt = function (x) {
+    return parseInt(x, 10) || 0;
+  };
+
+  var clone = helper.clone = function (obj) {
+    if (obj === null) {
+      return null;
+    } else if (obj.constructor === Array) {
+      return obj.map(clone);
+    } else if (typeof obj === 'object') {
+      var result = {};
+      for (var key in obj) {
+        result[key] = clone(obj[key]);
+      }
+      return result;
+    } else {
+      return obj;
+    }
+  };
+
+  helper.extend = function (original, source) {
+    var result = clone(original);
+    for (var key in source) {
+      result[key] = clone(source[key]);
+    }
+    return result;
+  };
+
+  helper.isEditable = function (el) {
+    return dom.matches(el, "input,[contenteditable]") ||
+      dom.matches(el, "select,[contenteditable]") ||
+      dom.matches(el, "textarea,[contenteditable]") ||
+      dom.matches(el, "button,[contenteditable]");
+  };
+
+  helper.removePsClasses = function (element) {
+    var clsList = cls.list(element);
+    for (var i = 0; i < clsList.length; i++) {
+      var className = clsList[i];
+      if (className.indexOf('ps-') === 0) {
+        cls.remove(element, className);
+      }
+    }
+  };
+
+  helper.outerWidth = function (element) {
+    return toInt(dom.css(element, 'width')) +
+      toInt(dom.css(element, 'paddingLeft')) +
+      toInt(dom.css(element, 'paddingRight')) +
+      toInt(dom.css(element, 'borderLeftWidth')) +
+      toInt(dom.css(element, 'borderRightWidth'));
+  };
+
+  helper.startScrolling = function (element, axis) {
+    cls.add(element, 'ps-in-scrolling');
+    if (typeof axis !== 'undefined') {
+      cls.add(element, 'ps-' + axis);
+    } else {
+      cls.add(element, 'ps-x');
+      cls.add(element, 'ps-y');
+    }
+  };
+
+  helper.stopScrolling = function (element, axis) {
+    cls.remove(element, 'ps-in-scrolling');
+    if (typeof axis !== 'undefined') {
+      cls.remove(element, 'ps-' + axis);
+    } else {
+      cls.remove(element, 'ps-x');
+      cls.remove(element, 'ps-y');
+    }
+  };
+
+  helper.env = {
+    isWebKit: 'WebkitAppearance' in document.documentElement.style,
+    supportsTouch: (('ontouchstart' in window) || window.DocumentTouch && document instanceof window.DocumentTouch),
+    supportsIePointer: window.navigator.msMaxTouchPoints !== null
+  };
+
+  return helper;
+})();
+
+
+
+/***********************************************************************************************************************
+ * Created by ojb74 on 2017-04-04.
+ *                                                                                             iws.plugin.defaultSetting
+ */
+iws.plugin.defaultSetting = (function(){
+  'use strict';
+
+  var defaultSetting = {
+    customInfo : null,  //이건 페이지 뷰어에 대한 특별한 처리때 사용됨.
+    handlers: ['click-rail', 'drag-scrollbar', 'keyboard', 'wheel', 'touch'],
+    maxScrollbarLength: null,
+    minScrollbarLength: null,
+    scrollXMarginOffset: 0,
+    scrollYMarginOffset: 0,
+    stopPropagationOnClick: true,
+    suppressScrollX: false,
+    suppressScrollY: false,
+    swipePropagation: true,
+    useBothWheelAxes: false,
+    wheelPropagation: false,
+    wheelSpeed: 1,
+    theme: 'default'
+  };
+
+  return defaultSetting;
+})();
+
+
+/***********************************************************************************************************************
+ *                                                                                                  iws.plugin.instances
+ * @type {{add, remove, get}}
+ */
+iws.plugin.instances = (function(){
+  'use strict';
+
+  var _             = iws.lib.helper;   //require('../lib/helper');
+  var cls           = iws.lib.class;    //require('../lib/class');
+  var defaultSettings = iws.plugin.defaultSetting;//require('./default-setting');
+  var dom           = iws.lib.DOM;    //require('../lib/dom');
+  var EventManager = iws.lib.EventManager;  //require('../lib/event-manager');
+  var guid          = iws.lib.guid;   //require('../lib/guid');
+
+  var instances = {};
+
+  function Instance(element) {
+    var i = this;
+
+    i.settings = _.clone(defaultSettings);
+    i.containerWidth = null;
+    i.containerHeight = null;
+    i.contentWidth = null;  //scrollWidth
+    i.contentHeight = null; //scrollHeight
+
+    i.contentLeft = null;  //scrollLeft
+    i.contentTop = null; //scrollTop
+
+
+    i.isRtl = dom.css(element, 'direction') === "rtl";
+    i.isNegativeScroll = (function () {
+      var originalScrollLeft = element.scrollLeft;
+      var result = null;
+      element.scrollLeft = -1;
+      result = element.scrollLeft < 0;
+      element.scrollLeft = originalScrollLeft;
+      return result;
+    })();
+    i.negativeScrollAdjustment = i.isNegativeScroll ? element.scrollWidth - element.clientWidth : 0;
+    i.event = new EventManager();
+    i.ownerDocument = element.ownerDocument || document;
+
+    function focus() {
+      cls.add(element, 'ps-focus');
+    }
+
+    function blur() {
+      cls.remove(element, 'ps-focus');
+    }
+
+    i.scrollbarXRail = dom.appendTo(dom.e('div', 'ps-scrollbar-x-rail'), element);
+    i.scrollbarX = dom.appendTo(dom.e('div', 'ps-scrollbar-x'), i.scrollbarXRail);
+    i.scrollbarX.setAttribute('tabindex', 0);
+    i.event.bind(i.scrollbarX, 'focus', focus);
+    i.event.bind(i.scrollbarX, 'blur', blur);
+    i.scrollbarXActive = null;
+    i.scrollbarXWidth = null;
+    i.scrollbarXLeft = null;
+    i.scrollbarXBottom = _.toInt(dom.css(i.scrollbarXRail, 'bottom'));
+    i.isScrollbarXUsingBottom = i.scrollbarXBottom === i.scrollbarXBottom; // !isNaN
+    i.scrollbarXTop = i.isScrollbarXUsingBottom ? null : _.toInt(dom.css(i.scrollbarXRail, 'top'));
+    i.railBorderXWidth = _.toInt(dom.css(i.scrollbarXRail, 'borderLeftWidth')) + _.toInt(dom.css(i.scrollbarXRail, 'borderRightWidth'));
+    // Set rail to display:block to calculate margins
+    dom.css(i.scrollbarXRail, 'display', 'block');
+    i.railXMarginWidth = _.toInt(dom.css(i.scrollbarXRail, 'marginLeft')) + _.toInt(dom.css(i.scrollbarXRail, 'marginRight'));
+    dom.css(i.scrollbarXRail, 'display', '');
+    i.railXWidth = null;
+    i.railXRatio = null;
+
+    i.scrollbarYRail = dom.appendTo(dom.e('div', 'ps-scrollbar-y-rail'), element);
+    i.scrollbarY = dom.appendTo(dom.e('div', 'ps-scrollbar-y'), i.scrollbarYRail);
+    i.scrollbarY.setAttribute('tabindex', 0);
+    i.event.bind(i.scrollbarY, 'focus', focus);
+    i.event.bind(i.scrollbarY, 'blur', blur);
+    i.scrollbarYActive = null;
+    i.scrollbarYHeight = null;
+    i.scrollbarYTop = null;
+    i.scrollbarYRight = _.toInt(dom.css(i.scrollbarYRail, 'right'));
+    i.isScrollbarYUsingRight = i.scrollbarYRight === i.scrollbarYRight; // !isNaN
+    i.scrollbarYLeft = i.isScrollbarYUsingRight ? null : _.toInt(dom.css(i.scrollbarYRail, 'left'));
+    i.scrollbarYOuterWidth = i.isRtl ? _.outerWidth(i.scrollbarY) : null;
+    i.railBorderYWidth = _.toInt(dom.css(i.scrollbarYRail, 'borderTopWidth')) + _.toInt(dom.css(i.scrollbarYRail, 'borderBottomWidth'));
+    dom.css(i.scrollbarYRail, 'display', 'block');
+    i.railYMarginHeight = _.toInt(dom.css(i.scrollbarYRail, 'marginTop')) + _.toInt(dom.css(i.scrollbarYRail, 'marginBottom'));
+    dom.css(i.scrollbarYRail, 'display', '');
+    i.railYHeight = null;
+    i.railYRatio = null;
+  }
+
+  function getId(element) {
+    return element.getAttribute('data-ps-id');
+  }
+
+  function setId(element, id) {
+    element.setAttribute('data-ps-id', id);
+  }
+
+  function removeId(element) {
+    element.removeAttribute('data-ps-id');
+  }
+
+  return {
+    add : function (element) {
+      var newId = guid();
+      setId(element, newId);
+      instances[newId] = new Instance(element);
+      return instances[newId];
+    },
+
+    remove : function (element) {
+      delete instances[getId(element)];
+      removeId(element);
+    },
+
+    get : function (element) {
+      return instances[getId(element)];
+    }
+  }
+})();
+
+
+/***********************************************************************************************************************
+ *                                                                                               iws.plugin.updateScroll
+ */
+iws.plugin.updateScroll = (function () {
+  'use strict';
+
+  var instances = iws.plugin.instances;//require('./instances');
+
+  var lastTop;
+  var lastLeft;
+
+  var createDOMEvent = function (name) {
+    var event = document.createEvent("Event");
+    event.initEvent(name, true, true);
+    return event;
+  };
+
+  return function (element, axis, value) {
+    if (typeof element === 'undefined') {
+      throw 'You must provide an element to the update-scroll function';
+    }
+
+    if (typeof axis === 'undefined') {
+      throw 'You must provide an axis to the update-scroll function';
+    }
+
+    if (typeof value === 'undefined') {
+      throw 'You must provide a value to the update-scroll function';
+    }
+
+    if (axis === 'top' && value <= 0) {
+      element.scrollTop = value = 0; // don't allow negative scroll
+      element.dispatchEvent(createDOMEvent('ps-y-reach-start'));
+    }
+
+    if (axis === 'left' && value <= 0) {
+      element.scrollLeft = value = 0; // don't allow negative scroll
+      element.dispatchEvent(createDOMEvent('ps-x-reach-start'));
+    }
+
+    var i = instances.get(element);
+
+    if (axis === 'top' && value >= i.contentHeight - i.containerHeight) {
+      // don't allow scroll past container
+      value = i.contentHeight - i.containerHeight;
+      if (value - element.scrollTop <= 1) {
+        // mitigates rounding errors on non-subpixel scroll values
+        value = element.scrollTop;
+      } else {
+        element.scrollTop = value;
+      }
+      element.dispatchEvent(createDOMEvent('ps-y-reach-end'));
+    }
+
+    if (axis === 'left' && value >= i.contentWidth - i.containerWidth) {
+      // don't allow scroll past container
+      value = i.contentWidth - i.containerWidth;
+      if (value - element.scrollLeft <= 1) {
+        // mitigates rounding errors on non-subpixel scroll values
+        value = element.scrollLeft;
+      } else {
+        element.scrollLeft = value;
+      }
+      element.dispatchEvent(createDOMEvent('ps-x-reach-end'));
+    }
+
+    if (!lastTop) {
+      lastTop = element.scrollTop;
+    }
+
+    if (!lastLeft) {
+      lastLeft = element.scrollLeft;
+    }
+
+    if (axis === 'top' && value < lastTop) {
+      element.dispatchEvent(createDOMEvent('ps-scroll-up'));
+    }
+
+    if (axis === 'top' && value > lastTop) {
+      element.dispatchEvent(createDOMEvent('ps-scroll-down'));
+    }
+
+    if (axis === 'left' && value < lastLeft) {
+      element.dispatchEvent(createDOMEvent('ps-scroll-left'));
+    }
+
+    if (axis === 'left' && value > lastLeft) {
+      element.dispatchEvent(createDOMEvent('ps-scroll-right'));
+    }
+
+    if (axis === 'top') {
+      element.scrollTop = lastTop = value;
+      element.dispatchEvent(createDOMEvent('ps-scroll-y'));
+    }
+
+    if (axis === 'left') {
+      element.scrollLeft = lastLeft = value;
+      element.dispatchEvent(createDOMEvent('ps-scroll-x'));
+    }
+
+  };
+
+})();
+
+
+
+/***********************************************************************************************************************
+ * Created by ojb74 on 2017-04-04.
+ *                                                                                             iws.plugin.updateGeometry
+ */
+iws.plugin.updateGeometry = (function () {
+  'use strict';
+
+  var _ = iws.lib.helper; //require('../lib/helper');
+  var cls = iws.lib.class; //require('../lib/class');
+  var dom = iws.lib.DOM;  //require('../lib/dom');
+  var instances = iws.plugin.instances; //require('./instances');
+  var updateScroll = iws.plugin.updateScroll; //require('./update-scroll');
+
+  function getThumbSize(i, thumbSize) {
+    if (i.settings.minScrollbarLength) {
+      thumbSize = Math.max(thumbSize, i.settings.minScrollbarLength);
+    }
+    if (i.settings.maxScrollbarLength) {
+      thumbSize = Math.min(thumbSize, i.settings.maxScrollbarLength);
+    }
+    return thumbSize;
+  }
+
+  function updateCss(element, i) {
+    var xRailOffset = {width: i.railXWidth};
+    if (i.isRtl) {
+      xRailOffset.left = i.negativeScrollAdjustment + element.scrollLeft + i.containerWidth - i.contentWidth;
+    } else {
+      xRailOffset.left = element.scrollLeft;
+    }
+    if (i.isScrollbarXUsingBottom) {
+      xRailOffset.bottom = i.scrollbarXBottom - element.scrollTop;
+    } else {
+      xRailOffset.top = i.scrollbarXTop + element.scrollTop;
+    }
+    dom.css(i.scrollbarXRail, xRailOffset);
+
+    var yRailOffset = {top: element.scrollTop, height: i.railYHeight};
+    if (i.isScrollbarYUsingRight) {
+      if (i.isRtl) {
+        yRailOffset.right = i.contentWidth - (i.negativeScrollAdjustment + element.scrollLeft) - i.scrollbarYRight - i.scrollbarYOuterWidth;
+      } else {
+        yRailOffset.right = i.scrollbarYRight - element.scrollLeft;
+      }
+    } else {
+      if (i.isRtl) {
+        yRailOffset.left = i.negativeScrollAdjustment + element.scrollLeft + i.containerWidth * 2 - i.contentWidth - i.scrollbarYLeft - i.scrollbarYOuterWidth;
+      } else {
+        yRailOffset.left = i.scrollbarYLeft + element.scrollLeft;
+      }
+    }
+    dom.css(i.scrollbarYRail, yRailOffset);
+
+    dom.css(i.scrollbarX, {left: i.scrollbarXLeft, width: i.scrollbarXWidth - i.railBorderXWidth});
+    dom.css(i.scrollbarY, {top: i.scrollbarYTop, height: i.scrollbarYHeight - i.railBorderYWidth});
+  }
+
+  return function (element) {
+    var i = instances.get(element);
+
+    i.containerWidth = element.clientWidth;
+    i.containerHeight = element.clientHeight;
+
+
+    if(i.settings.customInfo == null){
+      i.contentWidth = element.scrollWidth;
+      i.contentHeight = element.scrollHeight;
+      i.contentLeft = element.scrollLeft;
+      i.contentTop = element.scrollTop;
+    }else{
+      var customInfo = i.settings.customInfo.getContentInfo();
+      i.contentWidth = customInfo.scrollWidth;
+      i.contentHeight = customInfo.scrollHeight;
+      i.contentLeft = customInfo.scrollLeft;
+      i.contentTop = customInfo.scrollTop;
+    }
+
+
+    var existingRails;
+    if (!element.contains(i.scrollbarXRail)) {
+      existingRails = dom.queryChildren(element, '.ps-scrollbar-x-rail');
+      if (existingRails.length > 0) {
+        existingRails.forEach(function (rail) {
+          dom.remove(rail);
+        });
+      }
+      dom.appendTo(i.scrollbarXRail, element);
+    }
+    if (!element.contains(i.scrollbarYRail)) {
+      existingRails = dom.queryChildren(element, '.ps-scrollbar-y-rail');
+      if (existingRails.length > 0) {
+        existingRails.forEach(function (rail) {
+          dom.remove(rail);
+        });
+      }
+      dom.appendTo(i.scrollbarYRail, element);
+    }
+
+    if (!i.settings.suppressScrollX && i.containerWidth + i.settings.scrollXMarginOffset < i.contentWidth) {
+      i.scrollbarXActive = true;
+      i.railXWidth = i.containerWidth - i.railXMarginWidth;
+      i.railXRatio = i.containerWidth / i.railXWidth;
+      i.scrollbarXWidth = getThumbSize(i, _.toInt(i.railXWidth * i.containerWidth / i.contentWidth));
+      i.scrollbarXLeft = _.toInt((i.negativeScrollAdjustment + i.contentLeft/*element.scrollLeft*/) * (i.railXWidth - i.scrollbarXWidth) / (i.contentWidth - i.containerWidth));
+    } else {
+      i.scrollbarXActive = false;
+    }
+
+    if (!i.settings.suppressScrollY && i.containerHeight + i.settings.scrollYMarginOffset < i.contentHeight) {
+      i.scrollbarYActive = true;
+      i.railYHeight = i.containerHeight - i.railYMarginHeight;
+      i.railYRatio = i.containerHeight / i.railYHeight;
+      i.scrollbarYHeight = getThumbSize(i, _.toInt(i.railYHeight * i.containerHeight / i.contentHeight));
+      i.scrollbarYTop = _.toInt(i.contentTop/*element.scrollTop*/ * (i.railYHeight - i.scrollbarYHeight) / (i.contentHeight - i.containerHeight));
+    } else {
+      i.scrollbarYActive = false;
+    }
+
+    if (i.scrollbarXLeft >= i.railXWidth - i.scrollbarXWidth) {
+      i.scrollbarXLeft = i.railXWidth - i.scrollbarXWidth;
+    }
+    if (i.scrollbarYTop >= i.railYHeight - i.scrollbarYHeight) {
+      i.scrollbarYTop = i.railYHeight - i.scrollbarYHeight;
+    }
+
+    updateCss(element, i);
+
+    if (i.scrollbarXActive) {
+      cls.add(element, 'ps-active-x');
+    } else {
+      cls.remove(element, 'ps-active-x');
+      i.scrollbarXWidth = 0;
+      i.scrollbarXLeft = 0;
+      updateScroll(element, 'left', 0);
+    }
+    if (i.scrollbarYActive) {
+      cls.add(element, 'ps-active-y');
+    } else {
+      cls.remove(element, 'ps-active-y');
+      i.scrollbarYHeight = 0;
+      i.scrollbarYTop = 0;
+      updateScroll(element, 'top', 0);
+    }
+  };
+})();
+
+
+
+/***********************************************************************************************************************
+ * Created by ojb74 on 2017-04-05.
+ *                                                                                          iws.plugin.handler.clickRail
+ */
+iws.plugin.handler.clickRail = (function(){
+  'use strict';
+
+  var _ = iws.lib.helper; //require('../../lib/helper');
+  var instances = iws.plugin.instances; //require('../instances');
+  var updateGeometry = iws.plugin.updateGeometry; //require('../update-geometry');
+  var updateScroll = iws.plugin.updateScroll; //('../update-scroll');
+
+  function bindClickRailHandler(element, i) {
+    function pageOffset(el) {
+      return el.getBoundingClientRect();
+    }
+    var stopPropagation = function (e) { e.stopPropagation(); };
+
+    if (i.settings.stopPropagationOnClick) {
+      i.event.bind(i.scrollbarY, 'click', stopPropagation);
+    }
+    i.event.bind(i.scrollbarYRail, 'click', function (e) {
+      var halfOfScrollbarLength = _.toInt(i.scrollbarYHeight / 2);
+      var positionTop = i.railYRatio * (e.pageY - window.pageYOffset - pageOffset(i.scrollbarYRail).top - halfOfScrollbarLength);
+      var maxPositionTop = i.railYRatio * (i.railYHeight - i.scrollbarYHeight);
+      var positionRatio = positionTop / maxPositionTop;
+
+      if (positionRatio < 0) {
+        positionRatio = 0;
+      } else if (positionRatio > 1) {
+        positionRatio = 1;
+      }
+
+
+      //이거 뷰어에 셋팅하라고 데이터 넘김.
+      if(i.settings.customInfo){
+        var value = (i.contentHeight - i.containerHeight) * positionRatio;
+        var param = {
+          direction:'top',
+          value:-value
+        };
+        i.settings.customInfo.setContentInfo && i.settings.customInfo.setContentInfo(param);
+      }else{
+        //스크롤바의 위치를 변경.
+        updateScroll(element, 'top', (i.contentHeight - i.containerHeight) * positionRatio);
+      }
+
+      //위치를 계산하여 스크롤바 그림.
+      updateGeometry(element);
+
+      e.stopPropagation();
+    });
+
+    if (i.settings.stopPropagationOnClick) {
+      i.event.bind(i.scrollbarX, 'click', stopPropagation);
+    }
+    i.event.bind(i.scrollbarXRail, 'click', function (e) {
+      var halfOfScrollbarLength = _.toInt(i.scrollbarXWidth / 2);
+      var positionLeft = i.railXRatio * (e.pageX - window.pageXOffset - pageOffset(i.scrollbarXRail).left - halfOfScrollbarLength);
+      var maxPositionLeft = i.railXRatio * (i.railXWidth - i.scrollbarXWidth);
+      var positionRatio = positionLeft / maxPositionLeft;
+
+      if (positionRatio < 0) {
+        positionRatio = 0;
+      } else if (positionRatio > 1) {
+        positionRatio = 1;
+      }
+
+      //이거 뷰어에 셋팅하라고 데이터 넘김.
+      if(i.settings.customInfo){
+        var value = ((i.contentWidth - i.containerWidth) * positionRatio) - i.negativeScrollAdjustment;
+        var param = {
+          direction:'left',
+          value:-value
+        };
+        i.settings.customInfo.setContentInfo && i.settings.customInfo.setContentInfo(param);
+      }else {
+        updateScroll(element, 'left', ((i.contentWidth - i.containerWidth) * positionRatio) - i.negativeScrollAdjustment);
+      }
+      updateGeometry(element);
+
+      e.stopPropagation();
+    });
+  }
+
+  return function (element) {
+    var i = instances.get(element);
+    bindClickRailHandler(element, i);
+  };
+})();
+
+
+/***********************************************************************************************************************
+ * Created by ojb74 on 2017-04-06.
+ *                                                                                      iws.plugin.handler.dragScrollbar
+ */
+iws.plugin.handler.dragScrollbar = (function(){
+  'use strict';
+
+  var _ = iws.lib.helper; //require('../../lib/helper');
+  var dom = iws.lib.DOM;  //require('../../lib/dom');
+  var instances = iws.plugin.instances; //require('../instances');
+  var updateGeometry = iws.plugin.updateGeometry; //require('../update-geometry');
+  var updateScroll = iws.plugin.updateScroll; //require('../update-scroll');
+
+  function bindMouseScrollXHandler(element, i) {
+    var currentLeft = null;
+    var currentPageX = null;
+
+    function updateScrollLeft(deltaX) {
+      var newLeft = currentLeft + (deltaX * i.railXRatio);
+      var maxLeft = Math.max(0, i.scrollbarXRail.getBoundingClientRect().left) + (i.railXRatio * (i.railXWidth - i.scrollbarXWidth));
+
+      if (newLeft < 0) {
+        i.scrollbarXLeft = 0;
+      } else if (newLeft > maxLeft) {
+        i.scrollbarXLeft = maxLeft;
+      } else {
+        i.scrollbarXLeft = newLeft;
+      }
+
+      var scrollLeft = _.toInt(i.scrollbarXLeft * (i.contentWidth - i.containerWidth) / (i.containerWidth - (i.railXRatio * i.scrollbarXWidth))) - i.negativeScrollAdjustment;
+
+      //이거 뷰어에 셋팅하라고 데이터 넘김.
+      if(i.settings.customInfo){
+
+        var param = {
+          direction:'left',
+          value:-scrollLeft
+        };
+        i.settings.customInfo.setContentInfo && i.settings.customInfo.setContentInfo(param);
+      }else{
+        //스크롤바의 위치를 변경.
+        updateScroll(element, 'left', scrollLeft);
+      }
+
+    }
+
+    var mouseMoveHandler = function (e) {
+      updateScrollLeft(e.pageX - currentPageX);
+      updateGeometry(element);
+      e.stopPropagation();
+      e.preventDefault();
+    };
+
+    var mouseUpHandler = function () {
+      _.stopScrolling(element, 'x');
+      i.event.unbind(i.ownerDocument, 'mousemove', mouseMoveHandler);
+    };
+
+    i.event.bind(i.scrollbarX, 'mousedown', function (e) {
+      currentPageX = e.pageX;
+      currentLeft = _.toInt(dom.css(i.scrollbarX, 'left')) * i.railXRatio;
+      _.startScrolling(element, 'x');
+
+      i.event.bind(i.ownerDocument, 'mousemove', mouseMoveHandler);
+      i.event.once(i.ownerDocument, 'mouseup', mouseUpHandler);
+
+      e.stopPropagation();
+      e.preventDefault();
+    });
+  }
+
+  function bindMouseScrollYHandler(element, i) {
+    var currentTop = null;
+    var currentPageY = null;
+
+    function updateScrollTop(deltaY) {
+      var newTop = currentTop + (deltaY * i.railYRatio);
+      var maxTop = Math.max(0, i.scrollbarYRail.getBoundingClientRect().top) + (i.railYRatio * (i.railYHeight - i.scrollbarYHeight));
+
+      if (newTop < 0) {
+        i.scrollbarYTop = 0;
+      } else if (newTop > maxTop) {
+        i.scrollbarYTop = maxTop;
+      } else {
+        i.scrollbarYTop = newTop;
+      }
+
+      var scrollTop = _.toInt(i.scrollbarYTop * (i.contentHeight - i.containerHeight) / (i.containerHeight - (i.railYRatio * i.scrollbarYHeight)));
+      //이거 뷰어에 셋팅하라고 데이터 넘김.
+      if(i.settings.customInfo){
+
+        var param = {
+          direction:'top',
+          value:-scrollTop
+        };
+        i.settings.customInfo.setContentInfo && i.settings.customInfo.setContentInfo(param);
+      }else{
+        //스크롤바의 위치를 변경.
+        updateScroll(element, 'top', scrollTop);
+      }
+
+    }
+
+    var mouseMoveHandler = function (e) {
+      updateScrollTop(e.pageY - currentPageY);
+      updateGeometry(element);
+      e.stopPropagation();
+      e.preventDefault();
+    };
+
+    var mouseUpHandler = function () {
+      _.stopScrolling(element, 'y');
+      i.event.unbind(i.ownerDocument, 'mousemove', mouseMoveHandler);
+    };
+
+    i.event.bind(i.scrollbarY, 'mousedown', function (e) {
+      currentPageY = e.pageY;
+      currentTop = _.toInt(dom.css(i.scrollbarY, 'top')) * i.railYRatio;
+      _.startScrolling(element, 'y');
+
+      i.event.bind(i.ownerDocument, 'mousemove', mouseMoveHandler);
+      i.event.once(i.ownerDocument, 'mouseup', mouseUpHandler);
+
+      e.stopPropagation();
+      e.preventDefault();
+    });
+  }
+
+  return function (element) {
+    var i = instances.get(element);
+    bindMouseScrollXHandler(element, i);
+    bindMouseScrollYHandler(element, i);
+  };
+})();
+
+
+/***********************************************************************************************************************
+ * Created by ojb74 on 2017-04-06.
+ *                                                                                           iws.plugin.handler.keyboard
+ */
+iws.plugin.handler.keyboard = (function(){
+  'use strict';
+
+  var _ = iws.lib.helper; //require('../../lib/helper');
+  var dom = iws.lib.DOM;  //require('../../lib/dom');
+  var instances = iws.plugin.instances; //require('../instances');
+  var updateGeometry = iws.plugin.updateGeometry; //require('../update-geometry');
+  var updateScroll = iws.plugin.updateScroll; //require('../update-scroll');
+
+  function bindKeyboardHandler(element, i) {
+    var hovered = false;
+    i.event.bind(element, 'mouseenter', function () {
+      hovered = true;
+    });
+    i.event.bind(element, 'mouseleave', function () {
+      hovered = false;
+    });
+
+    var shouldPrevent = false;
+    function shouldPreventDefault(deltaX, deltaY) {
+      var scrollTop = element.scrollTop;
+      if (deltaX === 0) {
+        if (!i.scrollbarYActive) {
+          return false;
+        }
+        if ((scrollTop === 0 && deltaY > 0) || (scrollTop >= i.contentHeight - i.containerHeight && deltaY < 0)) {
+          return !i.settings.wheelPropagation;
+        }
+      }
+
+      var scrollLeft = element.scrollLeft;
+      if (deltaY === 0) {
+        if (!i.scrollbarXActive) {
+          return false;
+        }
+        if ((scrollLeft === 0 && deltaX < 0) || (scrollLeft >= i.contentWidth - i.containerWidth && deltaX > 0)) {
+          return !i.settings.wheelPropagation;
+        }
+      }
+      return true;
+    }
+
+    i.event.bind(i.ownerDocument, 'keydown', function (e) {
+      if ((e.isDefaultPrevented && e.isDefaultPrevented()) || e.defaultPrevented) {
+        return;
+      }
+
+      var focused = dom.matches(i.scrollbarX, ':focus') ||
+        dom.matches(i.scrollbarY, ':focus');
+
+      if (!hovered && !focused) {
+        return;
+      }
+
+      var activeElement = document.activeElement ? document.activeElement : i.ownerDocument.activeElement;
+      if (activeElement) {
+        if (activeElement.tagName === 'IFRAME') {
+          activeElement = activeElement.contentDocument.activeElement;
+        } else {
+          // go deeper if element is a webcomponent
+          while (activeElement.shadowRoot) {
+            activeElement = activeElement.shadowRoot.activeElement;
+          }
+        }
+        if (_.isEditable(activeElement)) {
+          return;
+        }
+      }
+
+      var deltaX = 0;
+      var deltaY = 0;
+
+      switch (e.which) {
+        case 37: // left
+          deltaX = -30;
+          break;
+        case 38: // up
+          deltaY = 30;
+          break;
+        case 39: // right
+          deltaX = 30;
+          break;
+        case 40: // down
+          deltaY = -30;
+          break;
+        case 33: // page up
+          deltaY = 90;
+          break;
+        case 32: // space bar
+          if (e.shiftKey) {
+            deltaY = 90;
+          } else {
+            deltaY = -90;
+          }
+          break;
+        case 34: // page down
+          deltaY = -90;
+          break;
+        case 35: // end
+          if (e.ctrlKey) {
+            deltaY = -i.contentHeight;
+          } else {
+            deltaY = -i.containerHeight;
+          }
+          break;
+        case 36: // home
+          if (e.ctrlKey) {
+            deltaY = element.scrollTop;
+          } else {
+            deltaY = i.containerHeight;
+          }
+          break;
+        default:
+          return;
+      }
+
+      updateScroll(element, 'top', element.scrollTop - deltaY);
+      updateScroll(element, 'left', element.scrollLeft + deltaX);
+      updateGeometry(element);
+
+      shouldPrevent = shouldPreventDefault(deltaX, deltaY);
+      if (shouldPrevent) {
+        e.preventDefault();
+      }
+    });
+  }
+
+  return function (element) {
+    var i = instances.get(element);
+    bindKeyboardHandler(element, i);
+  };
+})();
+
+/***********************************************************************************************************************
+ * Created by ojb74 on 2017-04-06.
+ *                                                                                         iws.plugin.handler.mouseWheel
+ */
+iws.plugin.handler.mouseWheel = (function(){
+  'use strict';
+
+  var instances = iws.plugin.instances; //require('../instances');
+  var updateGeometry = iws.plugin.updateGeometry; //require('../update-geometry');
+  var updateScroll = iws.plugin.updateScroll; //require('../update-scroll');
+
+  function bindMouseWheelHandler(element, i) {
+    var shouldPrevent = false;
+
+    function shouldPreventDefault(deltaX, deltaY) {
+      var scrollTop = element.scrollTop;
+      if (deltaX === 0) {
+        if (!i.scrollbarYActive) {
+          return false;
+        }
+        if ((scrollTop === 0 && deltaY > 0) || (scrollTop >= i.contentHeight - i.containerHeight && deltaY < 0)) {
+          return !i.settings.wheelPropagation;
+        }
+      }
+
+      var scrollLeft = element.scrollLeft;
+      if (deltaY === 0) {
+        if (!i.scrollbarXActive) {
+          return false;
+        }
+        if ((scrollLeft === 0 && deltaX < 0) || (scrollLeft >= i.contentWidth - i.containerWidth && deltaX > 0)) {
+          return !i.settings.wheelPropagation;
+        }
+      }
+      return true;
+    }
+
+    function getDeltaFromEvent(e) {
+      var deltaX = e.deltaX;
+      var deltaY = -1 * e.deltaY;
+
+      if (typeof deltaX === "undefined" || typeof deltaY === "undefined") {
+        // OS X Safari
+        deltaX = -1 * e.wheelDeltaX / 6;
+        deltaY = e.wheelDeltaY / 6;
+      }
+
+      if (e.deltaMode && e.deltaMode === 1) {
+        // Firefox in deltaMode 1: Line scrolling
+        deltaX *= 10;
+        deltaY *= 10;
+      }
+
+      if (deltaX !== deltaX && deltaY !== deltaY/* NaN checks */) {
+        // IE in some mouse drivers
+        deltaX = 0;
+        deltaY = e.wheelDelta;
+      }
+
+      return [deltaX, deltaY];
+    }
+
+    function shouldBeConsumedByChild(deltaX, deltaY) {
+      var child = element.querySelector('textarea:hover, select[multiple]:hover, .ps-child:hover');
+      if (child) {
+        if (child.tagName !== 'TEXTAREA' && !window.getComputedStyle(child).overflow.match(/(scroll|auto)/)) {
+          return false;
+        }
+
+        var maxScrollTop = child.scrollHeight - child.clientHeight;
+        if (maxScrollTop > 0) {
+          if (!(child.scrollTop === 0 && deltaY > 0) && !(child.scrollTop === maxScrollTop && deltaY < 0)) {
+            return true;
+          }
+        }
+        var maxScrollLeft = child.scrollLeft - child.clientWidth;
+        if (maxScrollLeft > 0) {
+          if (!(child.scrollLeft === 0 && deltaX < 0) && !(child.scrollLeft === maxScrollLeft && deltaX > 0)) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    function mousewheelHandler(e) {
+      var delta = getDeltaFromEvent(e);
+
+      var deltaX = delta[0];
+      var deltaY = delta[1];
+
+      if (shouldBeConsumedByChild(deltaX, deltaY)) {
+        return;
+      }
+
+      shouldPrevent = false;
+      if (!i.settings.useBothWheelAxes) {
+        // deltaX will only be used for horizontal scrolling and deltaY will
+        // only be used for vertical scrolling - this is the default
+        updateScroll(element, 'top', element.scrollTop - (deltaY * i.settings.wheelSpeed));
+        updateScroll(element, 'left', element.scrollLeft + (deltaX * i.settings.wheelSpeed));
+      } else if (i.scrollbarYActive && !i.scrollbarXActive) {
+        // only vertical scrollbar is active and useBothWheelAxes option is
+        // active, so let's scroll vertical bar using both mouse wheel axes
+        if (deltaY) {
+          updateScroll(element, 'top', element.scrollTop - (deltaY * i.settings.wheelSpeed));
+        } else {
+          updateScroll(element, 'top', element.scrollTop + (deltaX * i.settings.wheelSpeed));
+        }
+        shouldPrevent = true;
+      } else if (i.scrollbarXActive && !i.scrollbarYActive) {
+        // useBothWheelAxes and only horizontal bar is active, so use both
+        // wheel axes for horizontal bar
+        if (deltaX) {
+          updateScroll(element, 'left', element.scrollLeft + (deltaX * i.settings.wheelSpeed));
+        } else {
+          updateScroll(element, 'left', element.scrollLeft - (deltaY * i.settings.wheelSpeed));
+        }
+        shouldPrevent = true;
+      }
+
+      updateGeometry(element);
+
+      shouldPrevent = (shouldPrevent || shouldPreventDefault(deltaX, deltaY));
+      if (shouldPrevent) {
+        e.stopPropagation();
+        e.preventDefault();
+      }
+    }
+
+    if (typeof window.onwheel !== "undefined") {
+      i.event.bind(element, 'wheel', mousewheelHandler);
+    } else if (typeof window.onmousewheel !== "undefined") {
+      i.event.bind(element, 'mousewheel', mousewheelHandler);
+    }
+  }
+
+  return function (element) {
+    var i = instances.get(element);
+    bindMouseWheelHandler(element, i);
+  };
+
+})();
+
+/***********************************************************************************************************************
+ * Created by ojb74 on 2017-04-05.
+ *                                                                                       iws.plugin.handler.nativeScroll
+ */
+iws.plugin.handler.nativeScroll = (function(){
+  'use strict';
+
+  var instances = iws.plugin.instances; //require('../instances');
+  var updateGeometry = iws.plugin.updateGeometry;//require('../update-geometry');
+
+  function bindNativeScrollHandler(element, i) {
+    i.event.bind(element, 'scroll', function () {
+      updateGeometry(element);
+    });
+  }
+
+  /*module.exports = function (element) {
+   var i = instances.get(element);
+   bindNativeScrollHandler(element, i);
+   };
+   */
+  return function(element){
+    var i = instances.get(element);
+    bindNativeScrollHandler(element, i);
+  };
+
+})();
+
+/***********************************************************************************************************************
+ * Created by ojb74 on 2017-04-06.
+ *                                                                                          iws.plugin.handler.selection
+ */
+iws.plugin.handler.selection = (function(){
+  //이거 언제 발생되는지 아직도 잘 모르겠다..
+  'use strict';
+
+  var _ = iws.lib.helper; //require('../../lib/helper');
+  var instances = iws.plugin.instances; //require('../instances');
+  var updateGeometry = iws.plugin.updateGeometry; //require('../update-geometry');
+  var updateScroll = iws.plugin.updateScroll; //require('../update-scroll');
+
+  function bindSelectionHandler(element, i) {
+    function getRangeNode() {
+      var selection = window.getSelection ? window.getSelection() :
+        document.getSelection ? document.getSelection() : '';
+      if (selection.toString().length === 0) {
+        return null;
+      } else {
+        return selection.getRangeAt(0).commonAncestorContainer;
+      }
+    }
+
+    var scrollingLoop = null;
+    var scrollDiff = {top: 0, left: 0};
+    function startScrolling() {
+      if (!scrollingLoop) {
+        scrollingLoop = setInterval(function () {
+          if (!instances.get(element)) {
+            clearInterval(scrollingLoop);
+            return;
+          }
+
+          updateScroll(element, 'top', element.scrollTop + scrollDiff.top);
+          updateScroll(element, 'left', element.scrollLeft + scrollDiff.left);
+          updateGeometry(element);
+        }, 50); // every .1 sec
+      }
+    }
+    function stopScrolling() {
+      if (scrollingLoop) {
+        clearInterval(scrollingLoop);
+        scrollingLoop = null;
+      }
+      _.stopScrolling(element);
+    }
+
+    var isSelected = false;
+    i.event.bind(i.ownerDocument, 'selectionchange', function () {
+      if (element.contains(getRangeNode())) {
+        isSelected = true;
+      } else {
+        isSelected = false;
+        stopScrolling();
+      }
+    });
+    i.event.bind(window, 'mouseup', function () {
+      if (isSelected) {
+        isSelected = false;
+        stopScrolling();
+      }
+    });
+
+    i.event.bind(window, 'mousemove', function (e) {
+      if (isSelected) {
+        var mousePosition = {x: e.pageX, y: e.pageY};
+        var containerGeometry = {
+          left: element.offsetLeft,
+          right: element.offsetLeft + element.offsetWidth,
+          top: element.offsetTop,
+          bottom: element.offsetTop + element.offsetHeight
+        };
+
+        if (mousePosition.x < containerGeometry.left + 3) {
+          scrollDiff.left = -5;
+          _.startScrolling(element, 'x');
+        } else if (mousePosition.x > containerGeometry.right - 3) {
+          scrollDiff.left = 5;
+          _.startScrolling(element, 'x');
+        } else {
+          scrollDiff.left = 0;
+        }
+
+        if (mousePosition.y < containerGeometry.top + 3) {
+          if (containerGeometry.top + 3 - mousePosition.y < 5) {
+            scrollDiff.top = -5;
+          } else {
+            scrollDiff.top = -20;
+          }
+          _.startScrolling(element, 'y');
+        } else if (mousePosition.y > containerGeometry.bottom - 3) {
+          if (mousePosition.y - containerGeometry.bottom + 3 < 5) {
+            scrollDiff.top = 5;
+          } else {
+            scrollDiff.top = 20;
+          }
+          _.startScrolling(element, 'y');
+        } else {
+          scrollDiff.top = 0;
+        }
+
+        if (scrollDiff.top === 0 && scrollDiff.left === 0) {
+          stopScrolling();
+        } else {
+          startScrolling();
+        }
+      }
+    });
+  }
+
+  return function (element) {
+    var i = instances.get(element);
+    bindSelectionHandler(element, i);
+  };
+
+})();
+
+/***********************************************************************************************************************
+ * Created by ojb74 on 2017-04-06.
+ *                                                                                              iws.plugin.handler.touch
+ */
+iws.plugin.handler.touch = (function(){
+  'use strict';
+
+  var _ = iws.lib.helper; //require('../../lib/helper');
+  var instances = iws.plugin.instances; //require('../instances');
+  var updateGeometry = iws.plugin.updateGeometry; //require('../update-geometry');
+  var updateScroll = iws.plugin.updateScroll; //require('../update-scroll');
+
+  function bindTouchHandler(element, i, supportsTouch, supportsIePointer) {
+    function shouldPreventDefault(deltaX, deltaY) {
+      var scrollTop = element.scrollTop;
+      var scrollLeft = element.scrollLeft;
+      var magnitudeX = Math.abs(deltaX);
+      var magnitudeY = Math.abs(deltaY);
+
+      if (magnitudeY > magnitudeX) {
+        // user is perhaps trying to swipe up/down the page
+
+        if (((deltaY < 0) && (scrollTop === i.contentHeight - i.containerHeight)) ||
+          ((deltaY > 0) && (scrollTop === 0))) {
+          return !i.settings.swipePropagation;
+        }
+      } else if (magnitudeX > magnitudeY) {
+        // user is perhaps trying to swipe left/right across the page
+
+        if (((deltaX < 0) && (scrollLeft === i.contentWidth - i.containerWidth)) ||
+          ((deltaX > 0) && (scrollLeft === 0))) {
+          return !i.settings.swipePropagation;
+        }
+      }
+
+      return true;
+    }
+
+    function applyTouchMove(differenceX, differenceY) {
+      updateScroll(element, 'top', element.scrollTop - differenceY);
+      updateScroll(element, 'left', element.scrollLeft - differenceX);
+
+      updateGeometry(element);
+    }
+
+    var startOffset = {};
+    var startTime = 0;
+    var speed = {};
+    var easingLoop = null;
+    var inGlobalTouch = false;
+    var inLocalTouch = false;
+
+    function globalTouchStart() {
+      inGlobalTouch = true;
+    }
+    function globalTouchEnd() {
+      inGlobalTouch = false;
+    }
+
+    function getTouch(e) {
+      if (e.targetTouches) {
+        return e.targetTouches[0];
+      } else {
+        // Maybe IE pointer
+        return e;
+      }
+    }
+    function shouldHandle(e) {
+      if (e.targetTouches && e.targetTouches.length === 1) {
+        return true;
+      }
+      if (e.pointerType && e.pointerType !== 'mouse' && e.pointerType !== e.MSPOINTER_TYPE_MOUSE) {
+        return true;
+      }
+      return false;
+    }
+    function touchStart(e) {
+      if (shouldHandle(e)) {
+        inLocalTouch = true;
+
+        var touch = getTouch(e);
+
+        startOffset.pageX = touch.pageX;
+        startOffset.pageY = touch.pageY;
+
+        startTime = (new Date()).getTime();
+
+        if (easingLoop !== null) {
+          clearInterval(easingLoop);
+        }
+
+        e.stopPropagation();
+      }
+    }
+    function touchMove(e) {
+      if (!inLocalTouch && i.settings.swipePropagation) {
+        touchStart(e);
+      }
+      if (!inGlobalTouch && inLocalTouch && shouldHandle(e)) {
+        var touch = getTouch(e);
+
+        var currentOffset = {pageX: touch.pageX, pageY: touch.pageY};
+
+        var differenceX = currentOffset.pageX - startOffset.pageX;
+        var differenceY = currentOffset.pageY - startOffset.pageY;
+
+        applyTouchMove(differenceX, differenceY);
+        startOffset = currentOffset;
+
+        var currentTime = (new Date()).getTime();
+
+        var timeGap = currentTime - startTime;
+        if (timeGap > 0) {
+          speed.x = differenceX / timeGap;
+          speed.y = differenceY / timeGap;
+          startTime = currentTime;
+        }
+
+        if (shouldPreventDefault(differenceX, differenceY)) {
+          e.stopPropagation();
+          e.preventDefault();
+        }
+      }
+    }
+    function touchEnd() {
+      if (!inGlobalTouch && inLocalTouch) {
+        inLocalTouch = false;
+
+        clearInterval(easingLoop);
+        easingLoop = setInterval(function () {
+          if (!instances.get(element)) {
+            clearInterval(easingLoop);
+            return;
+          }
+
+          if (!speed.x && !speed.y) {
+            clearInterval(easingLoop);
+            return;
+          }
+
+          if (Math.abs(speed.x) < 0.01 && Math.abs(speed.y) < 0.01) {
+            clearInterval(easingLoop);
+            return;
+          }
+
+          applyTouchMove(speed.x * 30, speed.y * 30);
+
+          speed.x *= 0.8;
+          speed.y *= 0.8;
+        }, 10);
+      }
+    }
+
+    if (supportsTouch) {
+      i.event.bind(window, 'touchstart', globalTouchStart);
+      i.event.bind(window, 'touchend', globalTouchEnd);
+      i.event.bind(element, 'touchstart', touchStart);
+      i.event.bind(element, 'touchmove', touchMove);
+      i.event.bind(element, 'touchend', touchEnd);
+    }
+
+    if (supportsIePointer) {
+      if (window.PointerEvent) {
+        i.event.bind(window, 'pointerdown', globalTouchStart);
+        i.event.bind(window, 'pointerup', globalTouchEnd);
+        i.event.bind(element, 'pointerdown', touchStart);
+        i.event.bind(element, 'pointermove', touchMove);
+        i.event.bind(element, 'pointerup', touchEnd);
+      } else if (window.MSPointerEvent) {
+        i.event.bind(window, 'MSPointerDown', globalTouchStart);
+        i.event.bind(window, 'MSPointerUp', globalTouchEnd);
+        i.event.bind(element, 'MSPointerDown', touchStart);
+        i.event.bind(element, 'MSPointerMove', touchMove);
+        i.event.bind(element, 'MSPointerUp', touchEnd);
+      }
+    }
+  }
+
+  return function (element) {
+    if (!_.env.supportsTouch && !_.env.supportsIePointer) {
+      return;
+    }
+
+    var i = instances.get(element);
+    bindTouchHandler(element, i, _.env.supportsTouch, _.env.supportsIePointer);
+  };
+
+})();
+
+/***********************************************************************************************************************
+ * Created by ojb74 on 2017-04-05.
+ *                                                                                                 iws.plugin.initialize
+ */
+iws.plugin.initialize =  (function (){
+  'use strict';
+
+  var _ = iws.lib.helper; //require('../lib/helper');
+  var cls = iws.lib.class;  //require('../lib/class');
+  var instances = iws.plugin.instances; //require('./instances');
+  var updateGeometry = iws.plugin.updateGeometry; //require('./update-geometry');
+
+// Handlers
+  var handlers = {
+    'click-rail': iws.plugin.handler.clickRail, //require('./handler/click-rail')
+    'drag-scrollbar': iws.plugin.handler.dragScrollbar, //require('./handler/drag-scrollbar'),
+    'keyboard': iws.plugin.handler.keyboard,  //require('./handler/keyboard'),
+    'wheel': iws.plugin.handler.mouseWheel, //require('./handler/mouse-wheel'),
+    'touch': iws.plugin.handler.touch,  //require('./handler/touch'),
+    'selection': iws.plugin.handler.selection  //require('./handler/selection')
+  };
+
+  var nativeScrollHandler = iws.plugin.handler.nativeScroll;//require('./handler/native-scroll');
+
+  return function (element, userSettings) {
+    userSettings = typeof userSettings === 'object' ? userSettings : {};
+
+    cls.add(element, 'ps-container');
+
+    // Create a plugin instance.
+    var i = instances.add(element);
+
+    i.settings = _.extend(i.settings, userSettings);
+    cls.add(element, 'ps-theme-' + i.settings.theme);
+
+    i.settings.handlers.forEach(function (handlerName) {
+      handlers[handlerName] && handlers[handlerName](element);
+    });
+
+    nativeScrollHandler(element);
+
+    updateGeometry(element);
+  };
+})();
+
+/***********************************************************************************************************************
+ * Created by ojb74 on 2017-04-05.
+ *                                                                                                     iws.plugin.update
+ */
+iws.plugin.update = (function(){
+  'use strict';
+
+  var _ = iws.lib.helper; //require('../lib/helper');
+  var dom = iws.lib.DOM;  //require('../lib/dom');
+  var instances = iws.plugin.instances; //require('./instances');
+  var updateGeometry = iws.plugin.updateGeometry; //require('./update-geometry');
+  var updateScroll = iws.plugin.updateScroll; //require('./update-scroll');
+
+  return function (element) {
+    var i = instances.get(element);
+
+    if (!i) {
+      return;
+    }
+
+    // Recalcuate negative scrollLeft adjustment
+    i.negativeScrollAdjustment = i.isNegativeScroll ? element.scrollWidth - element.clientWidth : 0;
+
+    // Recalculate rail margins
+    dom.css(i.scrollbarXRail, 'display', 'block');
+    dom.css(i.scrollbarYRail, 'display', 'block');
+    i.railXMarginWidth = _.toInt(dom.css(i.scrollbarXRail, 'marginLeft')) + _.toInt(dom.css(i.scrollbarXRail, 'marginRight'));
+    i.railYMarginHeight = _.toInt(dom.css(i.scrollbarYRail, 'marginTop')) + _.toInt(dom.css(i.scrollbarYRail, 'marginBottom'));
+
+    // Hide scrollbars not to affect scrollWidth and scrollHeight
+    dom.css(i.scrollbarXRail, 'display', 'none');
+    dom.css(i.scrollbarYRail, 'display', 'none');
+
+    updateGeometry(element);
+
+    // Update top/left scroll to trigger events
+    updateScroll(element, 'top', element.scrollTop);
+    updateScroll(element, 'left', element.scrollLeft);
+
+    dom.css(i.scrollbarXRail, 'display', '');
+    dom.css(i.scrollbarYRail, 'display', '');
+  }
+})();
+
+
+/***********************************************************************************************************************
+ * Created by ojb74 on 2017-04-05.
+ *                                                                                                    iws.plugin.destroy
+ * @returns {Function}
+ */
+iws.plugin.destroy = function () {
+  'use strict';
+
+  var _ = iws.lib.helper; //require('../lib/helper');
+  var dom = iws.lib.DOM;  //require('../lib/dom');
+  var instances = iws.plugin.instances; //require('./instances');
+
+  return function(element){
+    var i = instances.get(element);
+
+    if (!i) {
+      return;
+    }
+
+    i.event.unbindAll();
+    dom.remove(i.scrollbarX);
+    dom.remove(i.scrollbarY);
+    dom.remove(i.scrollbarXRail);
+    dom.remove(i.scrollbarYRail);
+    _.removePsClasses(element);
+
+    instances.remove(element);
+  }
+
+};
+
+
+/***********************************************************************************************************************
+ * Created by ojb74 on 2017-04-04.
+ *                                                                                                            iws.scroll
+ * @returns {{initialize: *, update: *, destroy: *}}
+ */
+iws.scroll = (function(){
+  'use strict';
+
+  var destroy = iws.plugin.destroy; //require('./plugin/destroy');
+  var initialize = iws.plugin.initialize; //require('./plugin/initialize');
+  var update = iws.plugin.update; //require('./plugin/update');
+
+  return{
+    initialize: initialize,
+    update: update,
+    destroy: destroy
+  }
+})();
+
+
+

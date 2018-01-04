@@ -1,11 +1,3 @@
-/* FileSaver.js
- * A saveAs() FileSaver implementation.
- * 1.1.20160319
- *
- * By Eli Grey, http://eligrey.com
- * License: MIT
- *   See https://github.com/eligrey/FileSaver.js/blob/master/LICENSE.md
- */
 
 /*global self */
 /*jslint bitwise: true, indent: 4, laxbreak: true, laxcomma: true, smarttabs: true, plusplus: true */
@@ -20,7 +12,7 @@ var saveAs = saveAs || (function(view) {
 	}
 	var
 		  doc = view.document
-		  // only get URL when necessary in case Blob.js hasn't overridden it yet
+		  // only get URL when necessary in case Blob.viewer hasn't overridden it yet
 		, get_URL = function() {
 			return view.URL || view.webkitURL || view;
 		}

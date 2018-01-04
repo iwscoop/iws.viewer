@@ -1,0 +1,94 @@
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="no" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+    <title>Title</title>
+
+    <!--<script src="./vendor/jquery-2.2.3.js"></script>-->
+    <script src="../../vendor/jquery-1.11.1.js"></script>
+    <link href="../../vendor/spectrum.css" rel="stylesheet">
+    <script src="../../vendor/spectrum.js"></script>
+    <script src="../../vendor/hammer.js"></script>
+    <script src="../../vendor/FileSaver.js"></script>         <!--로컬에 파일 저장할 경우에만 사용 -->
+    <link href="../../vendor/iws-scrollbar.css" rel="stylesheet">
+    <script src="../../vendor/iws-scrollbar.js"></script>
+
+    <script src="../../engine/iws.w.loader.js"></script>
+    <script src="../../engine/iws.w.split.js"></script>
+    <link href="../../iws.viewer.css" rel="stylesheet">
+    <script src="../../iws.viewer.js"></script>
+
+    <script src="./iwsDemo_multiPage.js"></script>
+
+    <style>
+
+        div.content_block{
+            overflow:hidden;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="main_header">
+        <nav id="main_gnb" style="overflow:hidden;">
+            <ul style="float:left;">
+                <li><a href="#" onclick="LoadImageUrl()">Http image url</a></li>
+                <li><a href="#" onclick="AppendContents_http()">Http url(Image, video) & caption & annotation </a></li>
+                <li><a href="#" onclick="Clear()">Clear</a></li>
+            </ul>
+            <ul style="float:left;">
+                <li><a href="#" onclick="printStringSet()">printStringSet</a></li>
+                <li><a href="#" onclick="printMark()">printMark</a></li>
+                <li><a href="#" onclick="AllPrint()">전체출력</a></li>
+            </ul>
+            <ul style="float:left;">
+                <li><a href="#" onclick="Bookmark(0)">Bookmark-0</a> </li>
+                <li><a href="#" onclick="Bookmark(1)">Bookmark-1</a> </li>
+                <li><a href="#" onclick="Bookmark(2)">Bookmark-2</a> </li>
+                <li><a href="#" onclick="Bookmark(3)">Bookmark-3</a> </li>
+                <li><a href="#" onclick="getKey()">getKeys</a> </li>
+                <li><a href="#" onclick="setKey()">setKeys to number</a> </li>
+            </ul>
+            <ul style="float:left;">
+                <li><a href="#" onclick="setCaption()">setCaption</a> </li>
+                <li><a href="#" onclick="getCaption()">getCaption</a> </li>
+                <li><a href="#" onclick="clearCaption()">clearCaption</a> </li>
+                <li><a href="#" onclick="setText()">setNextLine</a> </li>
+                <li><a href="#" onclick="getText()">getNextLine</a> </li>
+                <li><a href="#" onclick="clearText()">clearNextLine</a> </li>
+            </ul>
+            <ul style="float:left;">
+                <li><a href="#" onclick="setAuthority('annotation', 'unvisible')">주석 권한설정(unvisible)</a> </li>
+                <li><a href="#" onclick="setAuthority('annotation', 'readonly')">주석 권한설정(readonly)</a> </li>
+                <li><a href="#" onclick="setAuthority('annotation', 'editable')">주석 권한설정(editable)</a> </li>
+                <li><a href="#" onclick="setAuthority('masking', 'unvisible')">마스킹 권한설정(unvisible)</a> </li>
+                <li><a href="#" onclick="setAuthority('masking', 'readonly')">마스킹 권한설정(readonly)</a> </li>
+                <li><a href="#" onclick="setAuthority('masking', 'editable')">마스킹 권한설정(editable)</a> </li>
+            </ul>
+
+        </nav>
+
+        <input type="file" style="display:none;" id="fileLoad" multiple/>
+    </div>
+    <div id="content" class="content_block">
+        <!--  iwsViewer -->
+        <div id="multiPage" style="width:100%;height:600px;"></div>
+
+    </div>
+
+
+    <button id="appendAnnotString">주석추가</button>
+    <textarea id="annotString" style="width:800px;height:100px;"></textarea>
+
+
+
+</body>
+</html>
+
