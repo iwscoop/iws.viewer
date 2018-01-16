@@ -734,6 +734,14 @@ body.waitMe_body .waitMe_container.text > div {width:100%;top:45%;text-align:cen
     background-color: #ebebeb;
     outline: none;
 }
+
+.pop-annotation .poptext {
+    outline: none;
+    width: 60px;
+    font-family: 'Jeju Gothic', serif;
+    font-size: 12px;
+}
+
 .pop-annotation .popbtn:hover{
     outline: none;
     background-color : #c0c0c0;
