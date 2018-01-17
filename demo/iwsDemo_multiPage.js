@@ -201,7 +201,7 @@ $(function() {  //  same this string ==> "$(document).ready(function() {});"
         useMasking:true,        //마스킹 툴바가 화면에 보이게 함.
         useBookMark:true,       //북마크 사용함.
         //useThumbNumber:false,  //썸네일 영역의 우측상단 번호보기
-        readOnlyOne : true,     //멀티페이지 일경우 1페이지만 읽는다.
+        //readOnlyOne : true,     //멀티페이지 일경우 1페이지만 읽는다.
 
         path:'../'   ,   //iws.viewer.js 파일에 접근가능한 경로를 넣는다.
         //path:'/IWS_Solution/WebContent/solution/iws/viewer',
