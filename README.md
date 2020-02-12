@@ -65,9 +65,6 @@ Demo - [http://www.iwscoop.co.kr/solution/demo](http://www.iwscoop.co.kr/solutio
     var opt = {
         path:'./'   ,
         fitMode:{name:'auto'},
-        useAnnotation:true,
-        reSampleUse:true
-        reSampleFilter:'none'
     };
 
     //객체 생성. 뷰어로 사용할 element와 옵션을 셋팅합니다.
@@ -275,14 +272,7 @@ viewer.observe('saveImage', function(data){
 
     페이지 수를 리턴.
 
->**showAnnotation(show)**
-- show : 주석 툴바 보기 옵션.
-    - Type : String
-        - 'show' : 주석툴바 보기
-        - 'hide' : 주석툴바 감추기
 
-
-    주석 툴바 보일지 말지 설정.
 
 >**crop(rect, callback)**
  - rect : {left: value, top:value, right:value, bottom:value} 처럼 위치 정보가 정의된 객체.
