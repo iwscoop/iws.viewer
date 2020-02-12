@@ -38,39 +38,38 @@
 
             //Load local image file.
             $('#fileLoad').on ('change', function(e){
-                var file = this.files[0];
 
-                var reader = new FileReader();
-                reader.onload = function() {
-                    //이미지를 새롭게 로딩 합니다.
-                    multiPage.loadFile(reader.result);
-                    //이미지를 기존 이미지에 추가합니다.
-                    //multiPage.appendFile(reader.result);
-                };
-                reader.readAsArrayBuffer(file);
+                multiPage.clear();
+                var files_length = this.files.length;
+
+                for (var i=0; i<files_length; i++) {
+                    var reader = new FileReader();
+                    reader.onload = function() {
+                        multiPage.appendFile(this.result);
+                    };
+                    reader.readAsArrayBuffer(this.files[i]);
+                }
             });
 
             var element = document.getElementById("multiPage");
             var opt = {
+                useMasking:true,
+                saveType: 'annotation'       ,   //저장버튼 클릭시 주석 저장.
                 fitMode:{name:'auto'},
-                useAnnotation:false,
                 path:'../../'   ,
                 //path:'/IWS_Solution/WebContent/solution/iws/viewer',
                 //path:'http://localhost:8181/IWS_Solution/WebContent/solution/iws/js',
-                reSampleUse:false,
-                thumbWidth:100,
             };
             multiPage = new iws.multiPage(element, opt);
-            multiPage.observe("mouse:drawRanged", function(rc){
-                alert("영역좌표("+rc.left+", "+rc.top+", "+rc.right+", "+rc.bottom+")");
 
-                //영역에 사각형마크를 그린다.
-                var obj = new iws.objectRect({ top: rc.top, left: rc.left, width: rc.right-rc.left, height: rc.bottom-rc.top, fill: '#000'});
-                multiPage.addAnnotation( obj );
-            });
+            multiPage.observe('saveAnnotation', function(data){
+                if(data.success){
+                    alert(data.annotation);
+                } else {
+                    alert('There are no saved comments.');
+                }
+            }, false);
 
-            //마우스 작동 방식은 영역그리기로 변경한다.(기본값: 'move')
-            multiPage.setTrackMode('range');
         });
     </script>
 
@@ -89,7 +88,7 @@
                 <li><a href="#" onclick="Clear()">Clear</a></li>
             </ul>
         </nav>
-        <input type="file" id="fileLoad" style="display:none"/>
+        <input type="file" id="fileLoad" style="display:none" multiple/>
 
     </div>
     <div id="content">
