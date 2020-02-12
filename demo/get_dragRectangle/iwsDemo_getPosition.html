@@ -52,13 +52,11 @@
 
             var element = document.getElementById("multiPage");
             var opt = {
+                rangeType : 'RectPoint',    //'ZoomIn','RectPoint'
                 fitMode:{name:'auto'},
-                useAnnotation:false,
                 path:'../../'   ,
                 //path:'/IWS_Solution/WebContent/solution/iws/viewer',
                 //path:'http://localhost:8181/IWS_Solution/WebContent/solution/iws/js',
-                reSampleUse:false,
-                thumbWidth:100,
             };
             multiPage = new iws.multiPage(element, opt);
             multiPage.observe("mouse:drawRanged", function(rc){
