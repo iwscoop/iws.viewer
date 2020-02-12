@@ -30,7 +30,6 @@
             $('#fileLoad').click();
         };
 
-
         var multiPage;
         $(function() {  //  same this string ==> "$(document).ready(function() {});"
 
@@ -49,47 +48,26 @@
             //뷰어 셋팅.
             var element = document.getElementById("multiPage");
             var opt = {
-                useAnnotation:false,
-                path:'../../'   ,
-                reSampleUse:false,
+                path:'../../' ,
+                thumbWidth:200 ,
             };
             multiPage = new iws.multiPage(element, opt);
 
             //버튼을 체크박스 값에 따라 보기 / 감추기 처리.
             $("#thumbnailShow").change(function(){
-                multiPage.thumbShow = this.checked;
+                multiPage.thumbShow = (this.checked)?'show':'hide';     //or 'max'
                 multiPage.refresh();
             });
+
+            $("#toolbarShow").change(function(){
+                multiPage.visible('toolbar', (this.checked)?'show':'hide');
+            });
+
         });
+
+
     </script>
     <style>
-        /*     .btn-default {
-                 color: #333;
-                 background-color: #fff;
-                 border-color: #ccc;
-             }
-             .btn {
-                 display: inline-block;
-                 padding: 6px 12px;
-                 margin-bottom: 0;
-                 font-size: 14px;
-                 font-weight: 400;
-                 line-height: 1.42857143;
-                 text-align: center;
-                 white-space: nowrap;
-                 vertical-align: middle;
-                 -ms-touch-action: manipulation;
-                 touch-action: manipulation;
-                 cursor: pointer;
-                 -webkit-user-select: none;
-                 -moz-user-select: none;
-                 -ms-user-select: none;
-                 user-select: none;
-                 background-image: none;
-                 border: 1px solid transparent;
-                 border-radius: 4px;
-             }*/
-
         nav>ul:before,
         nav>ul:after {
             content:" ";
@@ -120,13 +98,15 @@
         <h2>Show or hide.</h2>
         <ul>
             <li style="float:left;width:200px;list-style:none;"><input type="checkbox" class="show_hide" id="thumbnailShow"  checked="checked">썸네일 보기/감추기</li>
+            <li style="float:left;width:200px;list-style:none;"><input type="checkbox" class="show_hide" id="toolbarShow"  checked="checked">툴바 보기/감추기</li>
+
         </ul>
     </nav>
 
 </div>
 <div id="content">
     <!--  iwsViewer -->
-    <div id="multiPage" style="width:100%;height:700px;"></div>
+    <div id="multiPage" style="width:100%;height:400px;"></div>
 </div>
 
 </body>
