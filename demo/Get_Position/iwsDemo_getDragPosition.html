@@ -38,16 +38,16 @@
 
             //Load local image file.
             $('#fileLoad').on ('change', function(e){
-                var file = this.files[0];
+                multiPage.clear();
+                var files_length = this.files.length;
 
-                var reader = new FileReader();
-                reader.onload = function() {
-                    //이미지를 새롭게 로딩 합니다.
-                    multiPage.loadFile(reader.result);
-                    //이미지를 기존 이미지에 추가합니다.
-                    //multiPage.appendFile(reader.result);
-                };
-                reader.readAsArrayBuffer(file);
+                for (var i=0; i<files_length; i++) {
+                    var reader = new FileReader();
+                    reader.onload = function() {
+                        multiPage.appendFile(this.result);
+                    };
+                    reader.readAsArrayBuffer(this.files[i]);
+                }
             });
 
             var element = document.getElementById("multiPage");
@@ -60,7 +60,7 @@
             };
             multiPage = new iws.multiPage(element, opt);
             multiPage.observe("mouse:drawRanged", function(rc){
-                alert("영역좌표("+rc.left+", "+rc.top+", "+rc.right+", "+rc.bottom+")");
+                alert("페이지인덱스:" + multiPage.pageIndex + ", 영역좌표("+rc.left+", "+rc.top+", "+rc.right+", "+rc.bottom+")");
             });
 
             //마우스 작동 방식은 영역그리기로 변경한다.(기본값: 'move')
@@ -83,7 +83,7 @@
                 <li><a href="#" onclick="Clear()">Clear</a></li>
             </ul>
         </nav>
-        <input type="file" id="fileLoad" style="display:none"/>
+        <input type="file" id="fileLoad" style="display:none" multiple/>
 
     </div>
     <div id="content">
