@@ -63,7 +63,6 @@ $(function() {
     var opt = {
         fitMode:{name:'auto'}   ,   //이미지 화면 맞춤.
         saveType: 'image'       ,   //저장버튼 클릭시 이미지 저장.
-        useAnnotation:false     ,   //주석 사용 여부
         path:'../../'                   //iws.viewer.viewer 파일이 어디에 있는지 알려줘야 함. (html에서의 상대경로를 넣어도 됨.)
     };
     multiPage = new iws.multiPage(element, opt);
