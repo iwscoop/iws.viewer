@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <script src="../../vendor/jquery-2.2.3.js"></script>      <!--필수 셋팅 해야함        -->
+    <link href="../../vendor/spectrum.css" rel="stylesheet">  <!--주석  사용할때만 필요    -->
+    <script src="../../vendor/spectrum.js"></script>          <!--주석  사용할때만 필요    -->
+    <script src="../../vendor/hammer.min.js"></script>        <!--터치 사용할때만 필요     -->
+    <link href="../../vendor/iws-scrollbar.css" rel="stylesheet">    <!--페이지뷰 스크롤바 사용     -->
+    <script src="../../vendor/iws-scrollbar.js"></script>     <!--페이지뷰 스크롤바 사용     -->
+    <script src="../../vendor/FileSaver.js"></script>         <!--로컬에 파일 저장할 경우에만 사용 -->
+
+    <link href="../../iws.viewer.css" rel="stylesheet">
+    <script src="../../iws.viewer.js"></script>
+
+    <script>
+        function LoadImageUrl(){
+            multiPage.loadUrl("http://localhost:8181/IWS_Solution/WebContent/solution/test/images/multi(bw).tif");
+        }
+
+        function Clear(){
+            multiPage.clear();
+        }
+        //Load local image file.
+        function LoadImage(){
+            document.getElementById("fileLoad").value = "";
+            //클릭했을 때 발생하는 동작을 멈추는 방법
+            $('#fileLoad').click();
+        };
+
+
+
+
+        var multiPage;
+        $(function() {  //  same this string ==> "$(document).ready(function() {});"
+
+            //Load local image file.
+            $('#fileLoad').on ('change', function(e){
+
+                multiPage.clear();
+                var files_length = this.files.length;
+
+                for (var i=0; i<files_length; i++) {
+                    var reader = new FileReader();
+                    reader.onload = function() {
+                        multiPage.appendFile(this.result);
+                    };
+                    reader.readAsArrayBuffer(this.files[i]);
+                }
+            });
+
+            var element = document.getElementById("multiPage");
+            var opt = {
+                useAnnotation:true,
+                saveType: 'annotation'       ,   //저장버튼 클릭시 주석 저장.
+                fitMode:{name:'auto'},
+                path:'../../'   ,
+                //path:'/IWS_Solution/WebContent/solution/iws/viewer',
+                //path:'http://localhost:8181/IWS_Solution/WebContent/solution/iws/js',
+            };
+            multiPage = new iws.multiPage(element, opt);
+
+            multiPage.observe('saveAnnotation', function(data){
+                if(data.success){
+                    alert(data.annotation);
+                } else {
+                    alert('There are no saved comments.');
+                }
+            }, false);
+
+        });
+    </script>
+
+</head>
+<body>
+    <ul>
+        <li><a href="http://www.iwscoop.co.kr">Homepage.</a></li>
+        <li><a href="http://www.iwscoop.co.kr/solution/demo/iws_viewer.html">Demo.</a></li>
+    </ul>
+    <h2>Image load and save.</h2>
+    <div id="main_header">
+        <nav id="main_gnb">
+            <ul>
+                <li><a href="#" onclick="LoadImage()">Load File</a></li>
+                <li><a href="#" onclick="LoadImageUrl()">Http File</a></li>
+                <li><a href="#" onclick="Clear()">Clear</a></li>
+            </ul>
+        </nav>
+        <input type="file" id="fileLoad" style="display:none" multiple/>
+
+    </div>
+    <div id="content">
+        <!--  iwsViewer -->
+        <div id="multiPage" style="width:100%;height:700px;"></div>
+    </div>
+
+</body>
+</html>

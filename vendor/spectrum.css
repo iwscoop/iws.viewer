@@ -332,7 +332,8 @@ License: MIT
     margin:0;
     overflow:hidden;
     cursor:pointer;
-    padding: 4px;
+   /* padding: 4px;*/
+    padding: 1px 4px;
     display:inline-block;
     *zoom: 1;
     *display: inline;
@@ -351,7 +352,7 @@ License: MIT
     color: silver;
 }
 .sp-dd {
-    padding: 2px 0;
+    /*padding: 2px 0;*/
     height: 16px;
     line-height: 16px;
     float:left;
@@ -361,7 +362,7 @@ License: MIT
 {
     position:relative;
     width:25px;
-    height: 20px;
+    height: 16px;
     border: solid 1px #222;
     margin-right: 5px;
     float:left;

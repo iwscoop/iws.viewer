@@ -6,6 +6,7 @@
 .w3-container,.w3-panel{padding: 0.01em 16px;}.w3-panel{margin-top:16px; margin-bottom:16px; }
 .w3-red,.w3-hover-red:hover{color:#fff!important;background-color:#f44336!important}
 .w3-green,.w3-hover-green:hover{color:#fff!important;background-color:#4CAF50!important}
+.w3-notice,.w3-hover-notice:hover{font-family: 'Jeju Gothic', serif;color:#fff!important;background-color:rgb(53,189,165)!important}
 .w3-grey,.w3-hover-grey:hover,.w3-gray,.w3-hover-gray:hover{color:#000!important;background-color:#9e9e9e!important}
 .w3-light-grey,.w3-hover-light-grey:hover,.w3-light-gray,.w3-hover-light-gray:hover{color:#000!important;background-color:#f1f1f1!important}
 .w3-blue,.w3-hover-blue:hover{color:#fff!important;background-color:#2196F3!important}
@@ -66,7 +67,7 @@ JejuGothic-Regular.ttf
 }
 
 .iws-dropdownToolbarButton > select {
-    min-width: 60px;
+    min-width: 78px;
     font-size: 12px;
     font-family: 'Jeju Gothic', serif;
     color: #8e8e8e;
@@ -156,7 +157,7 @@ body.waitMe_body .waitMe_container.text > div {width:100%;top:45%;text-align:cen
 }
 
 /* progressBar */
-.waitMe_container .waitMe_progress.progressBar {width:200px;height:20px;margin:auto;background:rgba(0,0,0,.1);padding:5px;border-radius:20px;line-height:0;max-width:100%}
+.waitMe_container .waitMe_progress.progressBar {width:200px;height:20px;margin:auto;background:rgba(0,0,0,.1);padding:5px;border-radius:20px;line-height:1.4;max-width:100%}
 .waitMe_container .waitMe_progress.progressBar > div {width:100%;height:100%;overflow:hidden;border-radius:20px;background-size:50px 50px;box-shadow:inset 0 2px 9px rgba(255,255,255,.3), inset 0 -2px 6px rgba(0,0,0,.4);background-image:linear-gradient(-45deg, rgba(240,240,240,.4) 26%, transparent 25%, transparent 51%, rgba(240,240,240,.4) 50%, rgba(240,240,240,.4) 76%, transparent 75%, transparent);animation:progressBar 2s linear infinite}
 @keyframes progressBar {
     0% {background-position:0 0}
@@ -230,7 +231,10 @@ body.waitMe_body .waitMe_container.text > div {width:100%;top:45%;text-align:cen
     outline:none;
 }
 .iws_thumbnailContainer_show{
-    top:0;bottom:0;left:0;width:120px;  /*썸네일의 가로크기 결정함*/
+    top:0;bottom:0;left:0;width:160px;  /*썸네일의 가로크기 결정함*/
+}
+.iws_thumbnailContainer_max{
+    top:0;bottom:0;left:0;width:100%;
 }
 .iws_thumbnailContainer_hide{
     top:0;bottom:0;left:0;width:0;
@@ -243,32 +247,53 @@ body.waitMe_body .waitMe_container.text > div {width:100%;top:45%;text-align:cen
     background-color:#f9f9f9;
     box-shadow: 1px 0 2px 0 rgba(0, 0, 0, 0.05), inset -1px 0 0 0 rgba(0, 0, 0, 0.11);
     overflow:auto;
-    outline:none;
+    outline:none;   /*포커스 받을때의 표시*/
+
 }
+
+/*  익스플로러에서 제데로 작동하지 않아 주석처리*/
+/*.iws_thumbnailContainer:focus{
+    outline: thin dotted #abebeb;
+    outline-offset: -2px;
+}
+.iws-thumbnail:focus {
+    outline: thin dotted #abebeb;
+    outline-offset: -2px;
+}*/
 
 .iws-thumbnail_full{
     top:0;bottom:0;left:0;width:100%;
 }
 .iws-thumbnail_move{
-    top:24px;bottom:0;left:0;width:100%
+    top:36px;bottom:0;left:0;width:100%
 }
 
 
 .thumb_selectAll{
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 12px;
+    font-family: 'Jeju Gothic', serif;
+    font-size: 14px;
     font-weight: normal;
 
     position:absolute;
     padding-left: 4px;
     padding-top: 4px;
 
-    color:#FCFCFC;
+    color:#333;
     width:100px;
 }
 
 .thumb_selectAll_hide{
     display:none;
+}
+
+.selectall{
+    position:relative;
+    padding-left: 4px;
+    padding-top: 4px;
+    vertical-align: middle;
+    color:#ffffff;
+    width:20px;
+    height:20px;
 }
 
 .thumb_frame{
@@ -281,19 +306,33 @@ body.waitMe_body .waitMe_container.text > div {width:100%;top:45%;text-align:cen
 
     /*white-space:nowrap;*/
 }
+/*.thumb_frame > .thumb_layout_wrap {
+    position:relative;
+    margin: 4px;
+    padding: 4px;
+    background-color:#eeeeee;
+    border-radius: 4px;
+    !*width:120px;*!
+    !*display: inline-block;*!
+    !*float:left;*!
+}*/
 .thumb_frame > .thumb_layout_wrap {
     position:relative;
     margin: 4px;
     padding: 4px;
     background-color:#eeeeee;
     border-radius: 4px;
-    /*display: inline-block;*/
+    width:124px;     /*썸네일의 넓이를 결정함 (여기서 지정하면 caption 값이 길경우 다음라인으로 개행 됨.) */
+    display: inline-block;
+    vertical-align:top
 }
+
 .thumb_frame > .thumb_layout_wrap > .thumb_layout{
     position:relative;
     margin: 0 4px;
-    width:calc(100% - (8px));;
-    height:80px;   /*썸네일의 높이를 결정함*/
+    width:calc(100% - (8px));
+    /*width:80px;*/
+    height:120px;   /*썸네일의 높이를 결정함*/
     background-color: rgba(51, 120, 225, 0.15);
     border-radius: 4px;
     /*background-color:rgb(228,228,228);*/
@@ -471,6 +510,15 @@ body.waitMe_body .waitMe_container.text > div {width:100%;top:45%;text-align:cen
     background-color:#ebebeb;
     overflow:hidden;
 }
+/*  익스플로러에서 제데로 작동하지 않아 주석처리*/
+/*.lower-canvas:focus{
+    outline: thin dashed #abebeb;
+    outline-offset: -2px;
+}*/
+.lower-canvas{
+    outline:none;
+}
+
 
 .iws-page{
     position:absolute;
@@ -480,7 +528,10 @@ body.waitMe_body .waitMe_container.text > div {width:100%;top:45%;text-align:cen
     top:0;bottom:0;right:0;left:0;
 }
 .iws-page_move{
-    top:0;bottom:0;right:0;left:120px;  /*페이지 화면의 시작지점을 셋팅 함*/
+    top:0;bottom:0;right:0;left:160px;  /*썸네일과의 경계, 페이지 화면의 시작지점을 셋팅 함*/
+}
+.iws-page_hide{
+    top:0;bottom:0;right:0;width:0;
 }
 
 .multiPage-fullScreen{
@@ -525,6 +576,7 @@ body.waitMe_body .waitMe_container.text > div {width:100%;top:45%;text-align:cen
 
     /*border:1px solid #888888;*/
     box-shadow:inset 0 -1px 0 0 rgba(0, 0, 0, 0.09);
+    overflow: auto;
 }
 .pageToolbar{
     position: relative;
@@ -604,6 +656,8 @@ body.waitMe_body .waitMe_container.text > div {width:100%;top:45%;text-align:cen
 .pageToolbarButton_openfile {background-position: -80px 0px;}
 
 
+
+
 .pageToolbarButton{
     border: 1px;
     background-color: #f8f8f8;
@@ -622,6 +676,14 @@ body.waitMe_body .waitMe_container.text > div {width:100%;top:45%;text-align:cen
     /*border-style:none;*/
     cursor:default;
 }
+/*.pageToolbarButton:hover{
+
+    background-color : rgb(79, 138, 229);
+    border: solid 1px rgba(0, 0, 0, 0.2);
+    !*border-style:none;*!
+    cursor:default;
+}*/
+
 
 .pageToolbarButtonSeparator {
     padding: 4px 0 ;
@@ -644,6 +706,12 @@ body.waitMe_body .waitMe_container.text > div {width:100%;top:45%;text-align:cen
     0 0 1px hsla(0,0%,0%,.3) inset,
     0 1px 0 hsla(0,0%,100%,.05);
 }
+
+.pageToolbarButton#trackRange{
+    /*display:none;*/
+}
+
+
 
 .pageToolbarField {
     padding: 3px 6px;
@@ -686,7 +754,7 @@ body.waitMe_body .waitMe_container.text > div {width:100%;top:45%;text-align:cen
         width: 80px;
         !*display:none;*!*/
 
-    width:94px;
+    width:88px;
     border : 1px dashed rgba(51, 120, 225, 0.6);
 }
 
@@ -727,7 +795,22 @@ body.waitMe_body .waitMe_container.text > div {width:100%;top:45%;text-align:cen
     /*float: none;*/
     float: left;
     /*width: 100%;*/
-    padding: 8px 8px;
+    padding: 6px;
+    margin: 1px;
+    cursor: pointer;
+    border: 1px solid white;
+    border-radius: 4px;
+    background-color: #ebebeb;
+    outline: none;
+}
+
+.pop-annotation .popbtn_blank {
+    display: block;
+    /*float: none;*/
+    float: left;
+    /*width: 100%;*/
+    padding: 6px;
+    margin: 1px;
     cursor: pointer;
     border: 1px solid white;
     border-radius: 4px;
@@ -772,6 +855,14 @@ body.waitMe_body .waitMe_container.text > div {width:100%;top:45%;text-align:cen
     background: url("./img/iws.viewer.toolbar.blue.png") no-repeat top left;
 }
 
+.pop-annotation [class^="vIcon-Blank"] {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    vertical-align: text-top;
+    background: none;
+}
+
 .pop-annotation .vIcon-Select {    background-position: 0px -64px;}
 .pop-annotation .vIcon-DrawFree {    background-position: -16px -64px;}
 .pop-annotation .vIcon-DrawLine {    background-position: -32px -64px;}
@@ -784,15 +875,20 @@ body.waitMe_body .waitMe_container.text > div {width:100%;top:45%;text-align:cen
 .pop-annotation .vIcon-DrawCheckV {background-position: -128px -64px;}
 .pop-annotation .vIcon-DrawStamp {background-position: -144px -64px;}
 .pop-annotation .vIcon-DrawCheckX {background-position: -160px -64px;}
+.pop-annotation .vIcon-DrawStamp1 {background-position: -176px -64px;}
+.pop-annotation .vIcon-DrawStamp2 {background-position: -192px -64px;}
+.pop-annotation .vIcon-DrawStamp3 {background-position: -208px -64px;}
+.pop-annotation .vIcon-DrawStamp4 {background-position: -224px -64px;}
+.pop-annotation .vIcon-DrawMarker {background-position: -240px -64px;}
 
 .pop-annotation .pop-property {
     position: relative;
     /*display: inline-block;*/
     /*float: right;*/
 
-    margin-top: 10px;
+    margin-top: 4px;
     /*width: calc(100% - (4px));    !*이거 안넣을려구 했는데 우쯕끝(border)이 화면에서 깨져 표시되어 넣어해결함*!*/
-    width: 76px;    /*이거 안넣을려구 했는데 우쯕끝(border)이 화면에서 깨져 표시되어 넣어해결함*/
+    /*width: 76px;*/    /*이거 안넣을려구 했는데 우쯕끝(border)이 화면에서 깨져 표시되어 넣어해결함*/
     /*   min-width: 80px;
        min-height: 20px;*/
     background-color: rgba(248, 248, 248, 0.8);
@@ -805,30 +901,37 @@ body.waitMe_body .waitMe_container.text > div {width:100%;top:45%;text-align:cen
 
 }
 .pop-property .property-group-v{
-    padding: 0px;
+    padding: 2px;
     display:inline-block;
 }
+
 .pop-property .property-span {
-    width: 50px;
-    height: 30px;
+    width: 52px;
+    height: 20px;
     border: solid 1px #91765d;
     background: #eee;
 }
 
+.pop-property dl{
+    margin: 2px 0px;
+}
+
 .pop-property dt {
-    margin-top: 10px;
-    font: normal 12px "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;
+    margin-top: 6px;
+    margin-bottom: 2px;
+    padding-left: 4px;
+    font: normal 11px "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;
     line-height: 1.0;
 }
 
 .pop-property dd {
-    margin-left: 10px;
+    margin-left: 7px;
 }
 
 .pop-property input[type=checkbox] {
     width: 50px;
-    height: 30px;
-
+    height: 20px;
+    margin: 2px;
     background-color: rgba(200, 200, 200, 0.6);
 }
 
@@ -839,7 +942,7 @@ body.waitMe_body .waitMe_container.text > div {width:100%;top:45%;text-align:cen
 */
 /**************************************************************************************************************/
 .pop-masking {
-    width:62px;
+    /*width:62px;*/
     border : 1px dashed rgba(51, 120, 225, 0.6);
 }
 .pop-masking .handle{
@@ -852,7 +955,7 @@ body.waitMe_body .waitMe_container.text > div {width:100%;top:45%;text-align:cen
     display: inline-block;
 
     min-height: 100px;
-    width: 44px;
+    /*width: 44px;*/
     background-color: rgba(248, 248, 248, 0.8);/*gray; *//*rgba(5, 107, 166, 0.6);*/
     border: 1px solid #bbbbbb;
     border-radius: 4px;
@@ -865,9 +968,9 @@ body.waitMe_body .waitMe_container.text > div {width:100%;top:45%;text-align:cen
 .pop-masking .popbtn {
     display: block;
     float: none;
-    width: 100%;
+    /*width: 100%;*/
     margin-top: 2px;
-    padding: 8px 8px;
+    padding: 6px;
     cursor: pointer;
     border: 1px solid white;
     border-radius: 4px;
@@ -1111,7 +1214,7 @@ input[type=range] {
     border-radius: 0px 0px 6px 6px;
     overflow: auto;
 }
-.iws-message .w2ui-message-body {
+.iws-message .iws-message-body {
     position: absolute;
     top: 0px;
     bottom: 45px;
@@ -1121,6 +1224,9 @@ input[type=range] {
     line-height: 1.5;
     font-size: 14px;
     font-family: 'Jeju Gothic', serif;
+}
+.iws-message-body:first-child{
+    padding: 40px 10px 0px 10px;
 }
 .iws-message .iws-message-buttons {
     position: absolute;
@@ -1136,7 +1242,7 @@ input[type=range] {
     line-height: 1.5;
 }
 .iws-centered {
-    position: absolute;
+    /*position: absolute;
     left: 0px;
     right: 0px;
     top: 50%;
@@ -1147,9 +1253,11 @@ input[type=range] {
     transform: translateY(-50%);
     max-height: 100%;
     margin: 0px;
-    padding: 0px 10px;
+    padding: 0px 10px;*/
+    padding: 20px 10px 0px 10px;
     text-align: center;
 }
+
 button.iws-btn {
     position: relative;
     display: inline-block;
