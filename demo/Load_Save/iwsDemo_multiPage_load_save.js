@@ -68,7 +68,7 @@ $(function() {
     multiPage = new iws.multiPage(element, opt);
 
     
-    // 이미지 저장.
+    // 이미지 저장 버튼 클릭때 발생하는 이벤트.
     multiPage.observe('saveImage', function(data){
         if(data.success){
             saveAs(new Blob([data.byteArray], {type: "image/binary"}), "download.png");
