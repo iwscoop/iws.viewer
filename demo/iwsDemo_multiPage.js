@@ -207,7 +207,7 @@ $(function() {  //  same this string ==> "$(document).ready(function() {});"
         //path:'/IWS_Solution/WebContent/solution/iws/viewer',
         //path:'http://localhost:8181/IWS_Solution/WebContent/solution/iws/js',
         reSampleUse:true,
-        saveType: 'annotation'       ,   //저장버튼 클릭시 주석 저장.
+        saveType: 'annotation'       ,   //저장버튼 클릭시 주석 저장.('annotation' or 'image')
 
     };
     multiPage = new iws.multiPage(element, opt);

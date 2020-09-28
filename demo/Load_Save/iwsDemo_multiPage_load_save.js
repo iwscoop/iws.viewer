@@ -71,7 +71,18 @@ $(function() {
     // 이미지 저장 버튼 클릭때 발생하는 이벤트.
     multiPage.observe('saveImage', function(data){
         if(data.success){
-            saveAs(new Blob([data.byteArray], {type: "image/binary"}), "download.png");
+
+            // url 파일 이름 알아오기.
+            var url = multiPage.getUrl(multiPage.pageIndex);
+            var lastpos = url.lastIndexOf('/');
+            if(lastpos!=-1){
+                var filename = url.substr(lastpos+1, url.length - (lastpos+1));
+
+                // 로컬에 이미지파일 저장.
+                saveAs(new Blob([data.byteArray], {type: "image/binary"}), filename);
+            }
+
+            //saveAs(new Blob([data.byteArray], {type: "image/binary"}), "download.png");
         }
     }, false);
 

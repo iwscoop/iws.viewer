@@ -35,7 +35,7 @@ Demo - [http://www.iwscoop.co.kr/solution/demo](http://www.iwscoop.co.kr/solutio
                     spectrum.js
                     iws-scrollbar.css
                     iws-scrollbar.js
-            iws.viewer.js
+            iws.viewer_46.js
             iws.viewer.css
 -------------------
 
@@ -51,7 +51,7 @@ Demo - [http://www.iwscoop.co.kr/solution/demo](http://www.iwscoop.co.kr/solutio
     <script src="./vendor/ iws-scrollbar.js"></script>
 
     <link href="./iws.viewer.css" rel="stylesheet">
-    <script src="./iws.viewer.js"></script>
+    <script src="./iws.viewer_46.js"></script>
 ```
 -------------------
 
