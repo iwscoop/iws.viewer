@@ -67,23 +67,46 @@ $(function() {
     };
     multiPage = new iws.multiPage(element, opt);
 
-    
+    // 파일이름 잘라오기.
+    function getFileName(pageIndex) {
+        var filename = 'download.png';
+        var url = multiPage.getUrl(pageIndex);
+        var lastpos = url.lastIndexOf('/');
+        if (lastpos != -1) {
+            filename = url.substr(lastpos + 1, url.length - (lastpos + 1));
+        }
+        return filename;
+    }
+
     // 이미지 저장 버튼 클릭때 발생하는 이벤트.
     multiPage.observe('saveImage', function(data){
+        /*
+        // 로컬에 포커스 이미지파일 저장.
         if(data.success){
-
-            // url 파일 이름 알아오기.
-            var url = multiPage.getUrl(multiPage.pageIndex);
-            var lastpos = url.lastIndexOf('/');
-            if(lastpos!=-1){
-                var filename = url.substr(lastpos+1, url.length - (lastpos+1));
-
-                // 로컬에 이미지파일 저장.
-                saveAs(new Blob([data.byteArray], {type: "image/binary"}), filename);
-            }
-
-            //saveAs(new Blob([data.byteArray], {type: "image/binary"}), "download.png");
+            var filename = getFileName(multiPage.pageIndex);
+            saveAs(new Blob([data.byteArray], {type: "image/binary"}), filename);
         }
+        */
+
+        // 로컬에 선택된 이미지 파일 저장.
+        multiPage.pageSaveArray(function(imagearray){
+            for(var i=0; i<imagearray.length; i++){
+                var img = imagearray[i];    //array {index, url, imageArray}
+                saveAs(new Blob([img.imageArray], {type: "image/binary"}), getFileName(img.index));
+            }
+        });
+
     }, false);
+
+    //'전체 선택' 체크 박스 클릭
+    multiPage.observe("selectAll", function(checked){
+        console.log('All checkbox1 = ' + checked);
+    });
+
+    //'전체 선택' 체크 박스 클릭
+    var btnSelectAll = element.querySelector('.selectall');
+    btnSelectAll.addEventListener('click', function(){
+        console.log('All checkbox2 = ' + this.checked );
+    });
 
 });
