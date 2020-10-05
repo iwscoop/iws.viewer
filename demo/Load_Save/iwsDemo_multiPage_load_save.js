@@ -98,12 +98,12 @@ $(function() {
 
     }, false);
 
-    //'전체 선택' 체크 박스 클릭
+    //'전체 선택' 체크 박스 클릭 이벤트
     multiPage.observe("selectAll", function(checked){
         console.log('All checkbox1 = ' + checked);
     });
 
-    //'전체 선택' 체크 박스 클릭
+    //'전체 선택' 체크 박스 클릭 이벤트
     var btnSelectAll = element.querySelector('.selectall');
     btnSelectAll.addEventListener('click', function(){
         console.log('All checkbox2 = ' + this.checked );
